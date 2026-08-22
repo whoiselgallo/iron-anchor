@@ -14,5 +14,3 @@ services:
         value: "https://tudominio.com" # Cambiar luego por el de Vercel/Render
       - key: STRIPE_SECRET_KEY
         sync: false
-      - key: MERCADOPAGO_ACCESS_TOKEN
-        sync: false
