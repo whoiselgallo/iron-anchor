@@ -2,6 +2,7 @@ services:
   - type: web
     name: iron-anchor-backend
     env: node
+    plan: free
     rootDir: iron-and-anchor/backend
     buildCommand: npm install
     startCommand: npm start
