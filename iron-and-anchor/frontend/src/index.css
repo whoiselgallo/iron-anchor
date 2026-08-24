@@ -5,25 +5,23 @@
 @tailwind utilities;
 
 body {
-  background-color: #F3E5E3; /* iron (rosa palo) */
-  color: #2D2D2D; /* ivory (dark grey) */
+  background-color: #F3E5E3; /* Rosa Palo */
+  color: #2D2D2D; /* Texto Oscuro */
 }
 
-/* Custom styles for date input to look good on dark mode */
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1);
+    filter: invert(0);
 }
 
-/* Scrollbar personalizada industrial */
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #2A1A0F;
+  background: #F3E5E3;
 }
 ::-webkit-scrollbar-thumb {
-  background: #B7410E;
+  background: #D35400;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #FFC107;
+  background: #D97736;
 }
