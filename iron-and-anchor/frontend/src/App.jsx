@@ -51,10 +51,10 @@ function App() {
           <span>IRON & ANCHOR</span>
         </div>
         <div className="flex items-center gap-6">
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 text-ivory/60 hover:text-terracota font-bold transition text-sm">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 text-ivory/60 hover:text-yellowcta font-bold transition text-sm">
             <Cloud size={18} /> Cloud Sync
           </button>
-          <a href="#reservar" className="bg-terracota text-ivory px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-opacity-80 transition shadow-lg shadow-terracota/20">
+          <a href="#reservar" className="bg-yellowcta text-ivory px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-opacity-80 transition shadow-lg shadow-yellowcta/20">
             Agendar
           </a>
         </div>
@@ -64,10 +64,11 @@ function App() {
       <header className="relative bg-anchor py-32 text-center border-b-4 border-copper flex flex-col items-center overflow-hidden">
         
         {/* Video Loop de IA */}
-        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40">
+        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-85">
           <source src="/media/barber1.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-anchor/80 to-anchor"></div>
+        {/* Capa semitransparente para que el texto sea legible sobre el video */}
+        <div className="absolute inset-0 bg-gradient-to-b from-anchor/50 to-anchor/80"></div>
 
         <div className="relative z-10">
           <h1 className="text-6xl md:text-8xl font-serif text-ivory mb-4 tracking-[0.1em] uppercase drop-shadow-2xl">
@@ -79,7 +80,7 @@ function App() {
           <p className="text-lg max-w-3xl mx-auto text-ivory/80 mb-12 px-4 font-medium leading-relaxed">
             El Refugio del Hombre Moderno en Mexicali. Más que un corte de cabello, es un ritual. Relájate en una de nuestras 6 sillas maestras mientras nuestros expertos forjan tu estilo.
           </p>
-          <a href="#reservar" className="inline-flex items-center gap-3 bg-terracota text-ivory font-bold py-5 px-12 rounded-sm text-xl hover:bg-opacity-80 transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(211,84,0,0.4)]">
+          <a href="#reservar" className="inline-flex items-center gap-3 bg-yellowcta text-ivory font-bold py-5 px-12 rounded-sm text-xl hover:bg-opacity-80 transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(211,84,0,0.4)]">
             <Scissors size={24} />
             Agendar Cita
           </a>
@@ -107,10 +108,10 @@ function App() {
               <div 
                 key={s.id}
                 onClick={() => setReserva({...reserva, servicioId: s.id})}
-                className={`p-6 border-l-4 cursor-pointer transition-all ${reserva.servicioId === s.id ? 'border-terracota bg-anchor shadow-lg' : 'border-copper/30 bg-anchor/50 hover:border-copper hover:bg-anchor/80'}`}
+                className={`p-6 border-l-4 cursor-pointer transition-all ${reserva.servicioId === s.id ? 'border-yellowcta bg-anchor shadow-lg' : 'border-copper/30 bg-anchor/50 hover:border-copper hover:bg-anchor/80'}`}
               >
                 <div className="flex flex-col mb-3">
-                  <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-terracota' : 'text-ivory'}`}>{s.nombre}</h3>
+                  <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-yellowcta' : 'text-ivory'}`}>{s.nombre}</h3>
                   <div className="flex items-center gap-3 mt-2 text-sm">
                     <span className="bg-copper/20 text-copper px-2 py-1 rounded font-bold">{s.precio}</span>
                     <span className="text-ivory/50 font-medium">{s.tiempo}</span>
@@ -133,7 +134,7 @@ function App() {
                   <select 
                     value={reserva.barbero}
                     onChange={(e) => setReserva({...reserva, barbero: e.target.value})}
-                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-terracota transition appearance-none font-medium"
+                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-yellowcta transition appearance-none font-medium"
                   >
                     {barberos.map(b => <option key={b} value={b}>{b}</option>)}
                   </select>
@@ -145,7 +146,7 @@ function App() {
                     type="datetime-local" 
                     value={reserva.fecha}
                     onChange={(e) => setReserva({...reserva, fecha: e.target.value})}
-                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-terracota transition font-medium" 
+                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-yellowcta transition font-medium" 
                   />
                 </div>
 
@@ -156,7 +157,7 @@ function App() {
                     id="terms" 
                     checked={terminosAceptados}
                     onChange={(e) => setTerminosAceptados(e.target.checked)}
-                    className="mt-1 w-5 h-5 accent-terracota cursor-pointer flex-shrink-0"
+                    className="mt-1 w-5 h-5 accent-yellowcta cursor-pointer flex-shrink-0"
                   />
                   <label htmlFor="terms" className="text-sm text-ivory/70 cursor-pointer leading-tight">
                     He leído y acepto obligatoriamente las políticas de puntualidad y cancelación estipuladas.
@@ -173,7 +174,7 @@ function App() {
                   <button 
                     onClick={handleBooking} 
                     disabled={loading || !terminosAceptados}
-                    className="w-full bg-terracota disabled:bg-gray-600 disabled:text-gray-400 hover:bg-opacity-90 text-ivory py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2"
+                    className="w-full bg-yellowcta disabled:bg-gray-600 disabled:text-gray-400 hover:bg-opacity-90 text-ivory py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2"
                   >
                     <CheckCircle2 size={24} /> Asegurar Silla
                   </button>

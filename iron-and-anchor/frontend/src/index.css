@@ -5,8 +5,8 @@
 @tailwind utilities;
 
 body {
-  background-color: #4A2E1B; /* iron */
-  color: #F5F5F5; /* ivory */
+  background-color: #F3E5E3; /* iron (rosa palo) */
+  color: #2D2D2D; /* ivory (dark grey) */
 }
 
 /* Custom styles for date input to look good on dark mode */
