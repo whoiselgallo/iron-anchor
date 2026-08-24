@@ -51,10 +51,10 @@ function App() {
           <span>IRON & ANCHOR</span>
         </div>
         <div className="flex items-center gap-6">
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 text-ivory/60 hover:text-yellowcta font-bold transition text-sm">
+          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 text-ivory/60 hover:text-terracota font-bold transition text-sm">
             <Cloud size={18} /> Cloud Sync
           </button>
-          <a href="#reservar" className="bg-yellowcta text-anchor px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-yellow-500 transition shadow-lg shadow-yellowcta/20">
+          <a href="#reservar" className="bg-terracota text-ivory px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-opacity-80 transition shadow-lg shadow-terracota/20">
             Agendar
           </a>
         </div>
@@ -62,8 +62,11 @@ function App() {
 
       {/* HERO SECTION */}
       <header className="relative bg-anchor py-32 text-center border-b-4 border-copper flex flex-col items-center overflow-hidden">
-        {/* Placeholder para Video Loop de IA */}
-        <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
+        
+        {/* Video Loop de IA */}
+        <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-40">
+          <source src="/media/barber1.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-b from-anchor/80 to-anchor"></div>
 
         <div className="relative z-10">
@@ -76,7 +79,7 @@ function App() {
           <p className="text-lg max-w-3xl mx-auto text-ivory/80 mb-12 px-4 font-medium leading-relaxed">
             El Refugio del Hombre Moderno en Mexicali. Más que un corte de cabello, es un ritual. Relájate en una de nuestras 6 sillas maestras mientras nuestros expertos forjan tu estilo.
           </p>
-          <a href="#reservar" className="inline-flex items-center gap-3 bg-yellowcta text-anchor font-bold py-5 px-12 rounded-sm text-xl hover:bg-yellow-500 transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(255,193,7,0.3)]">
+          <a href="#reservar" className="inline-flex items-center gap-3 bg-terracota text-ivory font-bold py-5 px-12 rounded-sm text-xl hover:bg-opacity-80 transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(211,84,0,0.4)]">
             <Scissors size={24} />
             Agendar Cita
           </a>
@@ -84,14 +87,19 @@ function App() {
       </header>
 
       {/* SERVICIOS Y AGENDA */}
-      <section id="reservar" className="py-24 bg-iron px-4">
-        <div className="text-center mb-16">
+      <section id="reservar" className="py-24 bg-iron px-4 relative overflow-hidden">
+        {/* Background visual detail */}
+        <div className="absolute -right-64 top-0 opacity-5 pointer-events-none">
+          <img src="/media/barber5.jpeg" alt="Background Texture" className="w-[800px] h-auto grayscale rounded-full blur-3xl" />
+        </div>
+
+        <div className="text-center mb-16 relative z-10">
           <h2 className="text-4xl md:text-5xl font-serif text-ivory mb-4 tracking-widest uppercase">Menú de Especialidades</h2>
           <div className="h-1 w-24 bg-copper mx-auto mb-6"></div>
           <p className="text-ivory/70 font-medium">Selecciona tu servicio y optimiza tu tiempo en la silla.</p>
         </div>
 
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 relative z-10">
           
           {/* Menú de Servicios (GRID) */}
           <div className="lg:col-span-7 grid sm:grid-cols-2 gap-4 h-fit">
@@ -99,10 +107,10 @@ function App() {
               <div 
                 key={s.id}
                 onClick={() => setReserva({...reserva, servicioId: s.id})}
-                className={`p-6 border-l-4 cursor-pointer transition-all ${reserva.servicioId === s.id ? 'border-yellowcta bg-anchor shadow-lg' : 'border-copper/30 bg-anchor/50 hover:border-copper hover:bg-anchor/80'}`}
+                className={`p-6 border-l-4 cursor-pointer transition-all ${reserva.servicioId === s.id ? 'border-terracota bg-anchor shadow-lg' : 'border-copper/30 bg-anchor/50 hover:border-copper hover:bg-anchor/80'}`}
               >
                 <div className="flex flex-col mb-3">
-                  <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-yellowcta' : 'text-ivory'}`}>{s.nombre}</h3>
+                  <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-terracota' : 'text-ivory'}`}>{s.nombre}</h3>
                   <div className="flex items-center gap-3 mt-2 text-sm">
                     <span className="bg-copper/20 text-copper px-2 py-1 rounded font-bold">{s.precio}</span>
                     <span className="text-ivory/50 font-medium">{s.tiempo}</span>
@@ -116,16 +124,16 @@ function App() {
           {/* Motor de Reservas y Filtro Anti-Tóxicos */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             
-            <div className="bg-anchor p-8 border-t-4 border-copper shadow-2xl">
+            <div className="bg-anchor p-8 border-t-4 border-copper shadow-2xl relative overflow-hidden group">
               <h3 className="text-2xl font-serif mb-6 text-ivory tracking-widest uppercase">Confirmar Operación</h3>
               
-              <div className="space-y-5">
+              <div className="space-y-5 relative z-10">
                 <div>
                   <label className="flex items-center gap-2 mb-2 text-ivory/80 font-bold text-sm uppercase tracking-wide"><User size={16}/> Asignar Barbero</label>
                   <select 
                     value={reserva.barbero}
                     onChange={(e) => setReserva({...reserva, barbero: e.target.value})}
-                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-yellowcta transition appearance-none font-medium"
+                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-terracota transition appearance-none font-medium"
                   >
                     {barberos.map(b => <option key={b} value={b}>{b}</option>)}
                   </select>
@@ -137,7 +145,7 @@ function App() {
                     type="datetime-local" 
                     value={reserva.fecha}
                     onChange={(e) => setReserva({...reserva, fecha: e.target.value})}
-                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-yellowcta transition font-medium" 
+                    className="w-full p-4 bg-iron border-2 border-copper/30 text-ivory outline-none focus:border-terracota transition font-medium" 
                   />
                 </div>
 
@@ -148,7 +156,7 @@ function App() {
                     id="terms" 
                     checked={terminosAceptados}
                     onChange={(e) => setTerminosAceptados(e.target.checked)}
-                    className="mt-1 w-5 h-5 accent-yellowcta cursor-pointer flex-shrink-0"
+                    className="mt-1 w-5 h-5 accent-terracota cursor-pointer flex-shrink-0"
                   />
                   <label htmlFor="terms" className="text-sm text-ivory/70 cursor-pointer leading-tight">
                     He leído y acepto obligatoriamente las políticas de puntualidad y cancelación estipuladas.
@@ -165,7 +173,7 @@ function App() {
                   <button 
                     onClick={handleBooking} 
                     disabled={loading || !terminosAceptados}
-                    className="w-full bg-yellowcta disabled:bg-gray-600 disabled:text-gray-400 hover:bg-yellow-500 text-anchor py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2"
+                    className="w-full bg-terracota disabled:bg-gray-600 disabled:text-gray-400 hover:bg-opacity-90 text-ivory py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2"
                   >
                     <CheckCircle2 size={24} /> Asegurar Silla
                   </button>
@@ -191,12 +199,15 @@ function App() {
       </section>
 
       {/* FOOTER */}
-      <footer className="bg-anchor py-12 text-center border-t-4 border-copper">
-        <div className="flex justify-center items-center gap-3 text-ivory font-serif text-2xl tracking-widest uppercase mb-4">
-          <Anchor size={28} className="text-copper" />
-          <span>IRON & ANCHOR</span>
+      <footer className="relative bg-anchor py-12 text-center border-t-4 border-copper overflow-hidden">
+        <div className="absolute inset-0 opacity-10 bg-[url('/media/barber.jpeg')] bg-cover bg-center mix-blend-overlay"></div>
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="flex justify-center items-center gap-3 text-ivory font-serif text-2xl tracking-widest uppercase mb-4">
+            <Anchor size={28} className="text-copper" />
+            <span>IRON & ANCHOR</span>
+          </div>
+          <p className="text-ivory/40 text-sm font-medium tracking-wide">© 2026 Iron & Anchor Barbershop Mexicali. Estructura y Precisión.</p>
         </div>
-        <p className="text-ivory/40 text-sm font-medium tracking-wide">© 2026 Iron & Anchor Barbershop Mexicali. Estructura y Precisión.</p>
       </footer>
     </div>
   );

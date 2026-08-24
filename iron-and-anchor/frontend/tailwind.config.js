@@ -10,7 +10,7 @@ export default {
         iron: '#4A2E1B', // Marrón profundo (Dominante)
         anchor: '#2A1A0F', // Tono ultra oscuro de marrón para fondos secundarios/Navbar
         copper: '#B7410E', // Óxido (Estructural/Divisores)
-        yellowcta: '#FFC107', // Amarillo CTA
+        terracota: '#D35400', // Terracota CTA
         ivory: '#F5F5F5', // Blanco roto para texto
       },
       fontFamily: {
