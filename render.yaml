@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: iron-anchor-backend
+    env: node
+    plan: free
+    rootDir: iron-and-anchor/backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: FRONTEND_URL
+        value: "https://tudominio.com" # Cambiar luego por el de Vercel/Render
+      - key: STRIPE_SECRET_KEY
+        sync: false
