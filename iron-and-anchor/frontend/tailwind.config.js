@@ -7,15 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        iron: '#F3E5E3', // Rosa palo (Fondo principal)
-        anchor: '#E6D0CE', // Rosa palo ligeramente más oscuro (Navbar, secciones)
-        copper: '#C9A3A0', // Tono rosado medio (Bordes y separadores)
-        yellowcta: '#FFC107', // Amarillo CTA
-        ivory: '#2D2D2D', // Texto oscuro para contraste sobre el fondo rosa palo
+        rosapalo: '#F3E5E3', // Rosa palo
+        terracota: '#D35400', // Terracota
+        marron: '#4A2E1B', // Marrón
+        naranjaviejo: '#D97736', // Naranja viejo (CTA)
+        textdark: '#2D2D2D', // Texto oscuro para contrastar en rosa palo
+        textlight: '#F5F5F5', // Texto claro para contrastar en marrón/terracota
       },
       fontFamily: {
-        serif: ['"Black Ops One"', 'system-ui'], // Tipografía militar (H1, H2, H3)
-        sans: ['Raleway', 'sans-serif'], // Cuerpo y navegación
+        serif: ['"Black Ops One"', 'system-ui'],
+        sans: ['Raleway', 'sans-serif'],
       }
     },
   },
