@@ -12,7 +12,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [terminosAceptados, setTerminosAceptados] = useState(false);
 
-  const barberos = ['Cualquiera', 'Antonio G', 'Roberto R', 'Gonzalo H', 'Mariano', 'Maria A'];
+  const barberos = ['Cualquiera', 'Carlos Mendoza', 'Javier Espinoza', 'Omar Ortiz', 'Mateo Ríos', 'Nicole Ponce', 'Alan Castro'];
 
   // Alternando con las fotos (foto1 a foto5 para los servicios)
   const servicios = [
@@ -21,6 +21,70 @@ function App() {
     { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/foto5.jpeg' },
     { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/foto4.jpeg' },
     { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/foto3.jpeg' },
+  ];
+
+  // Datos de los Maestros Barberos
+  const maestros = [
+    {
+      id: 'carlos',
+      selectName: 'Carlos Mendoza',
+      nombre: 'Carlos "Mano de Hierro" Mendoza',
+      experiencia: '8 años de experiencia.',
+      especialidad: 'Desvanecidos complejos (High & Low Fades) y texturizados avanzados.',
+      resena: 'Carlos es reconocido en Mexicali por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas. Ideal para quien busca rapidez y exactitud.',
+      img: '/media/maestro_carlos.jpg',
+      ig: 'https://instagram.com/'
+    },
+    {
+      id: 'javier',
+      selectName: 'Javier Espinoza',
+      nombre: 'Javier "Ancla" Espinoza',
+      experiencia: '10 años de experiencia.',
+      especialidad: 'Ritual de Barba Clásico y afeitado tradicional con navaja libre.',
+      resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Su precisión para esculpir líneas y delinear simétricamente es aclamada por los empresarios.',
+      img: '/media/maestro_javier.jpg',
+      ig: 'https://instagram.com/'
+    },
+    {
+      id: 'omar',
+      selectName: 'Omar Ortiz',
+      nombre: 'Omar "Line" Ortiz',
+      experiencia: '6 años de experiencia.',
+      especialidad: 'Diseños urbanos, grecas y Hair Tattoo geométrico.',
+      resena: 'El especialista creativo. Posee destreza artística excepcional para trazar líneas ultra nítidas y personalizadas. Su enfoque meticuloso garantiza una obra de arte simétrica.',
+      img: '/media/maestro_omar.jpg',
+      ig: 'https://instagram.com/'
+    },
+    {
+      id: 'mateo',
+      selectName: 'Mateo Ríos',
+      nombre: 'Mateo "Express" Ríos',
+      experiencia: '5 años de experiencia.',
+      especialidad: 'Servicios Express, limpieza de contornos y cortes ejecutivos.',
+      resena: 'Especialista en optimización de tiempo. Preferido por clientes con agendas saturadas por su agilidad con clippers y tijeras. Limpieza de pulcritud absoluta en 15 minutos.',
+      img: '/media/maestro_mateo.jpg',
+      ig: 'https://instagram.com/'
+    },
+    {
+      id: 'nicole',
+      selectName: 'Nicole Ponce',
+      nombre: 'Nicole "Experiencia" Ponce',
+      experiencia: '11 años de experiencia.',
+      especialidad: 'Cortes clásicos, pompadour y asesoría de imagen avanzada.',
+      resena: 'Domina las estructuras capilares tradicionales. Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable y sofisticada.',
+      img: '/media/maestra_nicole.jpg',
+      ig: 'https://instagram.com/'
+    },
+    {
+      id: 'alan',
+      selectName: 'Alan Castro',
+      nombre: 'Alan "Precision" Castro',
+      experiencia: '7 años de experiencia.',
+      especialidad: 'Combo Ejecutivo integral (Cabello + Barba).',
+      resena: 'El experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos. Los usuarios elogian su consistencia y el trato profesional de inicio a fin.',
+      img: '/media/maestro_alan.jpg',
+      ig: 'https://instagram.com/'
+    }
   ];
 
   const handleBooking = async () => {
@@ -42,7 +106,7 @@ function App() {
   };
 
   return (
-    <div className="bg-rosapalo min-h-screen text-textdark font-sans">
+    <div className="bg-rosapalo min-h-screen text-textdark font-sans scroll-smooth">
       <CloudSyncModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       
       {/* NAVBAR */}
@@ -80,7 +144,7 @@ function App() {
             Estilo • Precisión • Rapidez
           </p>
           <p className="text-lg max-w-3xl mx-auto text-textlight/90 mb-12 px-4 font-medium leading-relaxed drop-shadow-md">
-            El Refugio del Hombre Moderno en Mexicali. Más que un corte de cabello, es un ritual. Relájate en una de nuestras 6 sillas maestras mientras nuestros expertos forjan tu estilo.
+            El Refugio del Hombre Moderno en Mexicali. Más que un corte de cabello, es un ritual. Relájate en una de nuestras sillas maestras mientras nuestros expertos forjan tu estilo.
           </p>
           <a href="#reservar" className="inline-flex items-center gap-3 bg-naranjaviejo text-textlight font-bold py-5 px-12 rounded-sm text-xl hover:bg-opacity-80 transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(217,119,54,0.6)]">
             <Scissors size={24} />
@@ -88,6 +152,45 @@ function App() {
           </a>
         </div>
       </header>
+
+      {/* SECCIÓN DE EQUIPO: LOS MAESTROS */}
+      <section id="equipo" className="py-24 bg-marron px-4 relative overflow-hidden border-b-8 border-terracota">
+        <div className="text-center mb-16 relative z-10">
+          <h2 className="text-4xl md:text-5xl font-serif text-rosapalo mb-4 tracking-widest uppercase">Los Maestros de Iron & Anchor</h2>
+          <div className="h-1 w-24 bg-terracota mx-auto mb-6"></div>
+          <p className="text-textlight/70 font-medium max-w-2xl mx-auto">Conoce a los expertos detrás de la silla. Cada uno especializado en forjar un estilo impecable.</p>
+        </div>
+
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative z-10">
+          {maestros.map((m) => (
+            <div key={m.id} className="bg-rosapalo p-8 rounded-xl shadow-xl flex flex-col border-2 border-copper hover:border-naranjaviejo transition-all duration-300 group">
+              <h3 className="text-2xl font-serif text-marron tracking-widest uppercase mb-6 text-center h-16 flex items-center justify-center leading-tight">{m.nombre}</h3>
+              
+              <div className="relative mb-6 mx-auto w-48 h-48 rounded-full">
+                {/* Glow Effect Trasero */}
+                <div className="absolute inset-0 bg-terracota rounded-full blur-xl opacity-0 group-hover:opacity-100 transition duration-500 transform scale-110"></div>
+                {/* Imagen del barbero (Usa una genérica si no existe el archivo) */}
+                <img src={m.img} alt={m.nombre} onError={(e) => e.target.src = 'https://ui-avatars.com/api/?name='+m.selectName+'&background=4A2E1B&color=F3E5E3&size=400'} className="relative w-full h-full object-cover rounded-full border-4 border-marron shadow-[0_0_15px_rgba(0,0,0,0.5)] z-10 bg-marron/20" />
+              </div>
+              
+              <div className="flex-1 text-center flex flex-col">
+                <p className="text-naranjaviejo font-bold text-sm mb-1 uppercase tracking-wider">{m.experiencia}</p>
+                <p className="text-marron font-bold text-sm mb-4 px-2 leading-tight border-b border-copper/30 pb-4">{m.especialidad}</p>
+                <p className="text-textdark/80 text-sm mb-6 leading-relaxed italic">"{m.resena}"</p>
+              </div>
+
+              <div className="flex flex-col gap-3 mt-auto">
+                <a href="#reservar" onClick={() => setReserva({...reserva, barbero: m.selectName})} className="w-full bg-naranjaviejo hover:bg-terracota text-textlight font-bold py-3 rounded text-center uppercase tracking-wider transition shadow-md">
+                  Agendar con {m.selectName.split(' ')[0]}
+                </a>
+                <a href={m.ig} target="_blank" rel="noreferrer" className="w-full border-2 border-naranjaviejo text-naranjaviejo hover:bg-naranjaviejo hover:text-textlight font-bold py-2 rounded text-center uppercase tracking-wider transition flex justify-center items-center gap-2">
+                  <Instagram size={18} /> Ver su Trabajo
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* SERVICIOS Y AGENDA */}
       <section id="reservar" className="py-24 bg-rosapalo px-4 relative overflow-hidden">
@@ -202,12 +305,12 @@ function App() {
             </div>
 
             {/* Módulo Legal / Políticas sobre la imagen agenda */}
-            <div className="relative rounded-lg overflow-hidden border-2 border-terracota shadow-lg p-6">
+            <div className="relative rounded-lg overflow-hidden border-2 border-terracota shadow-lg p-6 min-h-[300px] flex items-center">
               <div className="absolute inset-0 bg-[url('/media/agenda.jpeg')] bg-cover bg-center"></div>
               {/* Difuminación sutil */}
               <div className="absolute inset-0 bg-marron/60 backdrop-blur-[4px]"></div>
               
-              <div className="relative z-10 text-textlight">
+              <div className="relative z-10 text-textlight w-full">
                 <h4 className="flex items-center gap-2 text-naranjaviejo font-serif tracking-wider text-lg mb-4">
                   <ShieldAlert size={20} /> Políticas de Agenda
                 </h4>
@@ -266,7 +369,7 @@ function App() {
                 <Instagram size={20} className="text-white" />
               </a>
               <a href="#" className="bg-terracota p-3 rounded-full hover:bg-naranjaviejo transition shadow-lg">
-                {/* SVG for TikTok since Lucide doesn't have it by default usually */}
+                {/* SVG for TikTok */}
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">
                   <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path>
                 </svg>
