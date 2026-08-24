@@ -1,15 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Raleway:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  background-color: #1A1A1A; /* iron */
-  color: #FFFFF0; /* ivory */
+  background-color: #4A2E1B; /* iron */
+  color: #F5F5F5; /* ivory */
 }
 
 /* Custom styles for date input to look good on dark mode */
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
+}
+
+/* Scrollbar personalizada industrial */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #2A1A0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #B7410E;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFC107;
 }

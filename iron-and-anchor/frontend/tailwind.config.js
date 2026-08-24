@@ -7,14 +7,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        iron: '#1A1A1A', 
-        anchor: '#111111', 
-        copper: '#B87333', // Cobre Intenso
-        ivory: '#FFFFF0', // Marfil
+        iron: '#4A2E1B', // Marrón profundo (Dominante)
+        anchor: '#2A1A0F', // Tono ultra oscuro de marrón para fondos secundarios/Navbar
+        copper: '#B7410E', // Óxido (Estructural/Divisores)
+        yellowcta: '#FFC107', // Amarillo CTA
+        ivory: '#F5F5F5', // Blanco roto para texto
       },
       fontFamily: {
-        serif: ['"Playfair Display"', 'serif'],
-        sans: ['Montserrat', 'sans-serif'],
+        serif: ['"Black Ops One"', 'system-ui'], // Tipografía militar (H1, H2, H3)
+        sans: ['Raleway', 'sans-serif'], // Cuerpo y navegación
       }
     },
   },
