@@ -16,11 +16,11 @@ function App() {
 
   // Alternando con las fotos (foto1 a foto5 para los servicios)
   const servicios = [
-    { id: 'signature', nombre: 'Corte de Cabello Signature', precio: '$250 MXN', tiempo: '35 min', desc: 'Definición de estilo adaptada a las facciones. Incluye lavado y peinado.', img: '/media/foto1.jpeg' },
-    { id: 'ritual', nombre: 'Ritual de Barba Clásico', precio: '$200 MXN', tiempo: '30 min', desc: 'Perfilado detallado utilizando toallas calientes y navaja libre.', img: '/media/foto2.jpeg' },
-    { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/foto5.jpeg' },
-    { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/foto4.jpeg' },
-    { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/foto3.jpeg' },
+    { id: 'signature', nombre: 'Corte de Cabello Signature', precio: '$250 MXN', tiempo: '35 min', desc: 'Definición de estilo adaptada a las facciones. Incluye lavado y peinado.', img: '/media/foto0.jpeg' },
+    { id: 'ritual', nombre: 'Ritual de Barba Clásico', precio: '$200 MXN', tiempo: '30 min', desc: 'Perfilado detallado utilizando toallas calientes y navaja libre.', img: '/media/foto1.jpeg' },
+    { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/foto2.jpeg' },
+    { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/foto3.jpeg' },
+    { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/foto4.jpeg' },
   ];
 
   // Datos de los Maestros Barberos
@@ -32,7 +32,7 @@ function App() {
       experiencia: '8 años de experiencia.',
       especialidad: 'Desvanecidos complejos (High & Low Fades) y texturizados avanzados.',
       resena: 'Carlos es reconocido en Mexicali por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas. Ideal para quien busca rapidez y exactitud.',
-      img: '/media/maestro_carlos.jpg',
+      img: '/media/carlos.jpeg',
       ig: 'https://instagram.com/'
     },
     {
@@ -42,7 +42,7 @@ function App() {
       experiencia: '10 años de experiencia.',
       especialidad: 'Ritual de Barba Clásico y afeitado tradicional con navaja libre.',
       resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Su precisión para esculpir líneas y delinear simétricamente es aclamada por los empresarios.',
-      img: '/media/maestro_javier.jpg',
+      img: '/media/javier.jpeg',
       ig: 'https://instagram.com/'
     },
     {
@@ -52,7 +52,7 @@ function App() {
       experiencia: '6 años de experiencia.',
       especialidad: 'Diseños urbanos, grecas y Hair Tattoo geométrico.',
       resena: 'El especialista creativo. Posee destreza artística excepcional para trazar líneas ultra nítidas y personalizadas. Su enfoque meticuloso garantiza una obra de arte simétrica.',
-      img: '/media/maestro_omar.jpg',
+      img: '/media/omar.jpeg',
       ig: 'https://instagram.com/'
     },
     {
@@ -62,7 +62,7 @@ function App() {
       experiencia: '5 años de experiencia.',
       especialidad: 'Servicios Express, limpieza de contornos y cortes ejecutivos.',
       resena: 'Especialista en optimización de tiempo. Preferido por clientes con agendas saturadas por su agilidad con clippers y tijeras. Limpieza de pulcritud absoluta en 15 minutos.',
-      img: '/media/maestro_mateo.jpg',
+      img: '/media/mateo.jpeg',
       ig: 'https://instagram.com/'
     },
     {
@@ -72,7 +72,7 @@ function App() {
       experiencia: '11 años de experiencia.',
       especialidad: 'Cortes clásicos, pompadour y asesoría de imagen avanzada.',
       resena: 'Domina las estructuras capilares tradicionales. Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable y sofisticada.',
-      img: '/media/maestra_nicole.jpg',
+      img: '/media/nicole.jpeg',
       ig: 'https://instagram.com/'
     },
     {
@@ -82,7 +82,7 @@ function App() {
       experiencia: '7 años de experiencia.',
       especialidad: 'Combo Ejecutivo integral (Cabello + Barba).',
       resena: 'El experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos. Los usuarios elogian su consistencia y el trato profesional de inicio a fin.',
-      img: '/media/maestro_alan.jpg',
+      img: '/media/alan.jpeg',
       ig: 'https://instagram.com/'
     }
   ];
@@ -130,7 +130,7 @@ function App() {
         
         {/* Video Background */}
         <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-75">
-          <source src="/media/Barber_styling_client_hair_202608232038.mp4" type="video/mp4" />
+          <source src="/media/Barber_working_on_client.mp4" type="video/mp4" />
         </video>
         
         {/* Gradient Overlay for text readability */}
