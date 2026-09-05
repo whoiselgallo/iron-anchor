@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import BookingModal from '../components/BookingModal';, { useState } from 'react';
+import BookingModal from '../components/BookingModal';
 import axios from 'axios';
 import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Phone, Mail, CreditCard, Bell, Star, Download } from 'lucide-react';
 import CloudSyncModal from '../components/CloudSyncModal';
