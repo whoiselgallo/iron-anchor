@@ -7,16 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        rosapalo: '#F3E5E3', // Rosa palo
-        terracota: '#D35400', // Terracota
-        marron: '#4A2E1B', // Marrón
-        naranjaviejo: '#D97736', // Naranja viejo (CTA)
-        textdark: '#2D2D2D', // Texto oscuro para contrastar en rosa palo
-        textlight: '#F5F5F5', // Texto claro para contrastar en marrón/terracota
+        marron: '#4A2E1B',
+        mostaza: '#E1AD01',
+        perla: '#F8F6F0',
+        textdark: '#2D2D2D',
       },
       fontFamily: {
         serif: ['"Black Ops One"', 'system-ui'],
         sans: ['Raleway', 'sans-serif'],
+      },
+      boxShadow: {
+        'glow-smoke': '0 0 25px rgba(169, 169, 169, 0.4)',
       }
     },
   },
