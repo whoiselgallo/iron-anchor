@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Facebook, Instagram, Phone, Mail, CreditCard, Bell } from 'lucide-react';
+import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Facebook, Instagram, Phone, Mail, CreditCard, Bell, Star, Download } from 'lucide-react';
 import CloudSyncModal from '../components/CloudSyncModal';
 import CheckoutForm from '../components/CheckoutForm';
 import { Link } from 'react-router-dom';
@@ -35,32 +35,38 @@ function Landing() {
     {
       id: 'luis', selectName: 'Luis Mendoza', nombre: 'Luis "Mano de Hierro"',
       experiencia: '8 años de exp.', especialidad: 'Desvanecidos complejos y texturizados',
-      resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.', img: '/media/luis.jpeg'
+      resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.', img: '/media/luis.jpeg',
+      rating: 4.9, vcard: 'https://rosevcard.com/vcf/luis-mendoza.vcf'
     },
     {
       id: 'javier', selectName: 'Javier Espinoza', nombre: 'Javier "Ancla"',
       experiencia: '10 años de exp.', especialidad: 'Ritual Clásico y afeitado tradicional',
-      resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.', img: '/media/javier.jpeg'
+      resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.', img: '/media/javier.jpeg',
+      rating: 5.0, vcard: 'https://rosevcard.com/vcf/javier-espinoza.vcf'
     },
     {
       id: 'omar', selectName: 'Omar Ortiz', nombre: 'Omar "Line"',
       experiencia: '6 años de exp.', especialidad: 'Diseños urbanos y Hair Tattoo',
-      resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.', img: '/media/omar.jpeg'
+      resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.', img: '/media/omar.jpeg',
+      rating: 4.8, vcard: 'https://rosevcard.com/vcf/omar-ortiz.vcf'
     },
     {
       id: 'mateo', selectName: 'Mateo Ríos', nombre: 'Mateo "Express"',
       experiencia: '5 años de exp.', especialidad: 'Limpieza de contornos y ejecutivos',
-      resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.', img: '/media/mateo.jpeg'
+      resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.', img: '/media/mateo.jpeg',
+      rating: 4.9, vcard: 'https://rosevcard.com/vcf/mateo-rios.vcf'
     },
     {
       id: 'nicole', selectName: 'Nicole Ponce', nombre: 'Nicole "Experiencia"',
       experiencia: '11 años de exp.', especialidad: 'Cortes clásicos y asesoría de imagen',
-      resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.', img: '/media/nicole.jpeg'
+      resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.', img: '/media/nicole.jpeg',
+      rating: 5.0, vcard: 'https://rosevcard.com/vcf/nicole-ponce.vcf'
     },
     {
       id: 'alan', selectName: 'Alan Castro', nombre: 'Alan "Precision"',
       experiencia: '7 años de exp.', especialidad: 'Combo Ejecutivo (Cabello + Barba)',
-      resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.', img: '/media/alan.jpeg'
+      resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.', img: '/media/alan.jpeg',
+      rating: 4.9, vcard: 'https://rosevcard.com/vcf/alan-castro.vcf'
     }
   ];
 
@@ -147,6 +153,14 @@ function Landing() {
                 <div className="relative mb-6 mx-auto w-40 h-40 rounded-full">
                   <div className="absolute inset-0 bg-mostaza rounded-full blur-xl opacity-0 group-hover:opacity-60 transition duration-500 transform scale-110"></div>
                   <img src={m.img} alt={m.nombre} className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
+                </div>
+
+                {/* BARRA DE RESEÑA */}
+                <div className="flex justify-center items-center gap-1 mb-4 text-mostaza">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} fill={i < Math.floor(m.rating) ? "currentColor" : "transparent"} strokeWidth={2} />
+                  ))}
+                  <span className="text-perla font-bold ml-2 text-sm">{m.rating.toFixed(1)}/5.0</span>
                 </div>
                 
                 <div className="flex-1 text-center flex flex-col">
