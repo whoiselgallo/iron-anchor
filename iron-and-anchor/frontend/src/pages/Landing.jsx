@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Facebook, Instagram, Phone, Mail, CreditCard, Bell } from 'lucide-react';
 import CloudSyncModal from '../components/CloudSyncModal';
+import CheckoutForm from '../components/CheckoutForm';
 import { Link } from 'react-router-dom';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const stripePromise = loadStripe('pk_test_tu_llave_publica_de_stripe');
 
 function Landing() {
   const [reserva, setReserva] = useState({ servicioId: 'signature', barbero: 'Cualquiera', fecha: '' });
@@ -12,6 +16,7 @@ function Landing() {
   const [message, setMessage] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [terminosAceptados, setTerminosAceptados] = useState(false);
+  const [clientSecret, setClientSecret] = useState('');
 
   // Fechas individuales para la agenda de cada barbero
   const [fechasBarberos, setFechasBarberos] = useState({});
@@ -66,7 +71,8 @@ function Landing() {
     setLoading(true); setMessage('');
     try {
       const response = await axios.post(`${API_URL}/api/pay/stripe`, reserva);
-      setMessage(`Redirigiendo a pasarela Stripe segura... (Simulado)`);
+      setClientSecret(response.data.clientSecret);
+      setMessage('✅ Reserva procesada. Finaliza tu pago a continuación.');
     } catch (error) {
       setMessage(error.response?.data?.error || 'Error al procesar la reserva. Intenta de nuevo.');
     } finally { setLoading(false); }
@@ -225,9 +231,17 @@ function Landing() {
                 </div>
                 {message && (<div className={`p-4 font-bold text-sm rounded ${message.includes('Error') || message.includes('Por favor') ? 'bg-red-900/80 text-red-100 border-l-4 border-red-500' : 'bg-green-900/80 text-green-100 border-l-4 border-green-500'}`}>{message}</div>)}
                 <div className="pt-2">
-                  <button onClick={handleBooking} disabled={loading || !terminosAceptados} className="w-full bg-perla disabled:bg-gray-600 disabled:text-gray-400 text-marron hover:bg-mostaza py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2 rounded shadow-[0_0_15px_rgba(248,246,240,0.3)]">
-                    <CheckCircle2 size={24} /> Asegurar Silla
-                  </button>
+                  {clientSecret ? (
+                    <div className="mt-4">
+                      <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#E1AD01', colorBackground: '#3A2214', colorText: '#F8F6F0' } } }}>
+                        <CheckoutForm clientSecret={clientSecret} onCancel={() => setClientSecret('')} />
+                      </Elements>
+                    </div>
+                  ) : (
+                    <button onClick={handleBooking} disabled={loading || !terminosAceptados} className="w-full bg-perla disabled:bg-gray-600 disabled:text-gray-400 text-marron hover:bg-mostaza py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2 rounded shadow-[0_0_15px_rgba(248,246,240,0.3)]">
+                      <CheckCircle2 size={24} /> {loading ? 'Cargando Pasarela...' : 'Asegurar Silla'}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

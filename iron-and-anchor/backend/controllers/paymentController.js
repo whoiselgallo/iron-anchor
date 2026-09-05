@@ -4,9 +4,11 @@ const db = require('../config/db');
 const stripe = Stripe(process.env.STRIPE_SECRET_KEY);
 
 const SERVICIOS = {
-    corte: { nombre: "Corte Clásico", precio: 25.00 },
-    rasurado: { nombre: "Rasurado Tradicional", precio: 20.00 },
-    combo: { nombre: "Promo: Iron & Anchor (Corte + Rasurado)", precio: 40.00 }
+    signature: { nombre: "Corte de Cabello Signature", precio: 250.00 },
+    ritual: { nombre: "Ritual de Barba Clásico", precio: 200.00 },
+    combo: { nombre: "Combo Ejecutivo", precio: 400.00 },
+    tattoo: { nombre: "Diseño de Líneas y Hair Tattoo", precio: 150.00 },
+    express: { nombre: "Servicio Express", precio: 120.00 }
 };
 
 const MAX_SILLAS = 6;
@@ -28,7 +30,7 @@ const createStripePayment = async (req, res) => {
 
         const paymentIntent = await stripe.paymentIntents.create({
             amount: servicio.precio * 100, // Stripe usa centavos
-            currency: 'usd',
+            currency: 'mxn',
             metadata: { servicio: servicio.nombre, barbero, fecha }
         });
 
