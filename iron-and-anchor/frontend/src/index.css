@@ -5,23 +5,23 @@
 @tailwind utilities;
 
 body {
-  background-color: #F3E5E3; /* Rosa Palo */
-  color: #2D2D2D; /* Texto Oscuro */
+  background-color: #4A2E1B; /* marron */
+  color: #F8F6F0; /* perla */
 }
 
-input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0);
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
 }
 
 ::-webkit-scrollbar {
   width: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #F3E5E3;
+  background: #4A2E1B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D35400;
+  background: #E1AD01;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #D97736;
+  background: #F8F6F0;
 }
