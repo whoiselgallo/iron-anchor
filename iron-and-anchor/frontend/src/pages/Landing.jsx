@@ -24,11 +24,11 @@ function Landing() {
   const barberos = ['Cualquiera', 'Luis Mendoza', 'Javier Espinoza', 'Omar Ortiz', 'Mateo Ríos', 'Nicole Ponce', 'Alan Castro'];
 
   const servicios = [
-    { id: 'signature', nombre: 'Corte de Cabello Signature', precio: '$250 MXN', tiempo: '35 min', desc: 'Definición de estilo adaptada a las facciones. Incluye lavado y peinado.', img: '/media/Cliente_recibiendo_corte_desvane._2K_202608240046.jpeg' },
-    { id: 'ritual', nombre: 'Ritual de Barba Clásico', precio: '$200 MXN', tiempo: '30 min', desc: 'Perfilado detallado utilizando toallas calientes y navaja libre.', img: '/media/Barbero_afeitando_barba_con_navaja_202608240046.jpeg' },
-    { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/Barber_working_on_customer_hair_202608240046.jpeg' },
-    { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/Hair_tattoo_geometric_design_pho._202608240045.jpeg' },
-    { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/Man_sitting_in_barbershop_2K_202608240046.jpeg' },
+    { id: 'signature', nombre: 'Corte de Cabello Signature', precio: '$250 MXN', tiempo: '35 min', desc: 'Definición de estilo adaptada a las facciones. Incluye lavado y peinado.', img: '/media/corte_cabello.jpeg' },
+    { id: 'ritual', nombre: 'Ritual de Barba Clásico', precio: '$200 MXN', tiempo: '30 min', desc: 'Perfilado detallado utilizando toallas calientes y navaja libre.', img: '/media/ritual_barba.jpeg' },
+    { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/combo_ejecutivo.jpeg' },
+    { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/hair_tattoo.jpeg' },
+    { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/servicio_express.jpeg' },
   ];
 
   const maestros = [
@@ -152,7 +152,7 @@ function Landing() {
                 
                 <div className="relative mb-6 mx-auto w-40 h-40 rounded-full">
                   <div className="absolute inset-0 bg-mostaza rounded-full blur-xl opacity-0 group-hover:opacity-60 transition duration-500 transform scale-110"></div>
-                  <img src={m.img} alt={m.nombre} className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
+                  <img src={m.img} alt={m.nombre} loading="lazy" className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
                 </div>
 
                 {/* BARRA DE RESEÑA */}
@@ -222,7 +222,7 @@ function Landing() {
                       <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold"><span className="text-perla">{s.precio}</span><span className="text-mostaza">| {s.tiempo}</span></div>
                       <p className="text-perla/70 text-sm leading-relaxed">{s.desc}</p>
                     </div>
-                    <div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} className="w-full h-full object-cover" /></div></>
+                    <div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} loading="lazy" className="w-full h-full object-cover" /></div></>
                 )}
               </div>
             ))}
