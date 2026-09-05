@@ -156,11 +156,16 @@ function Landing() {
                 </div>
 
                 {/* BARRA DE RESEÑA */}
-                <div className="flex justify-center items-center gap-1 mb-4 text-mostaza">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={16} fill={i < Math.floor(m.rating) ? "currentColor" : "transparent"} strokeWidth={2} />
-                  ))}
-                  <span className="text-perla font-bold ml-2 text-sm">{m.rating.toFixed(1)}/5.0</span>
+                <div className="flex flex-col items-center mb-4">
+                  <div className="flex justify-center items-center gap-1 text-mostaza mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={16} fill={i < Math.floor(m.rating) ? "currentColor" : "transparent"} strokeWidth={2} />
+                    ))}
+                    <span className="text-perla font-bold ml-2 text-sm">{m.rating.toFixed(1)}/5.0</span>
+                  </div>
+                  <a href={`https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE`} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider text-mostaza hover:text-marron hover:bg-mostaza border border-mostaza px-3 py-1 rounded-full transition">
+                    Calificar en Google
+                  </a>
                 </div>
                 
                 <div className="flex-1 text-center flex flex-col">

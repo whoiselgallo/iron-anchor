@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
-import { DollarSign, Users, Calendar as CalendarIcon, TrendingUp, Anchor, Activity, Clock } from 'lucide-react';
+import { DollarSign, Users, Calendar as CalendarIcon, TrendingUp, Anchor, Activity, Clock, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { es } from 'date-fns/locale';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+const locales = {
+  'es': es,
+};
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 // Datos Simulados del Dashboard
 const metricasMensuales = [
@@ -29,6 +44,73 @@ const agendaHoy = [
   { hora: '01:00 PM', cliente: 'David Ruiz', barbero: 'Mateo Ríos', servicio: 'Express', estado: 'Agendado' },
   { hora: '03:45 PM', cliente: 'Ernesto Paz', barbero: 'Nicole Ponce', servicio: 'Corte Signature', estado: 'Agendado' },
 ];
+
+const barberColors = {
+  'Luis Mendoza': '#3b82f6', // azul
+  'Javier Espinoza': '#10b981', // verde
+  'Omar Ortiz': '#f59e0b', // naranja
+  'Mateo Ríos': '#ef4444', // rojo
+  'Nicole Ponce': '#8b5cf6', // morado
+  'Alan Castro': '#ec4899', // rosa
+};
+
+const getBaseDate = () => {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+const eventosAgenda = [
+  {
+    title: 'Luis Mendoza (Disponible)',
+    start: new Date(getBaseDate().getTime() + 10 * 60 * 60 * 1000),
+    end: new Date(getBaseDate().getTime() + 14 * 60 * 60 * 1000),
+    barbero: 'Luis Mendoza',
+    isAvailable: true
+  },
+  {
+    title: 'Roberto Gómez - Corte',
+    start: new Date(getBaseDate().getTime() + 10 * 60 * 60 * 1000),
+    end: new Date(getBaseDate().getTime() + 11 * 60 * 60 * 1000),
+    barbero: 'Luis Mendoza',
+    isAvailable: false
+  },
+  {
+    title: 'Javier Espinoza (Disponible)',
+    start: new Date(getBaseDate().getTime() + 11 * 60 * 60 * 1000),
+    end: new Date(getBaseDate().getTime() + 18 * 60 * 60 * 1000),
+    barbero: 'Javier Espinoza',
+    isAvailable: true
+  },
+  {
+    title: 'Nicole Ponce (Disponible)',
+    start: new Date(getBaseDate().getTime() + 13 * 60 * 60 * 1000),
+    end: new Date(getBaseDate().getTime() + 19 * 60 * 60 * 1000),
+    barbero: 'Nicole Ponce',
+    isAvailable: true
+  },
+  {
+    title: 'Ernesto Paz - Signature',
+    start: new Date(getBaseDate().getTime() + 15 * 60 * 60 * 1000 + 45 * 60 * 1000),
+    end: new Date(getBaseDate().getTime() + 16 * 60 * 60 * 1000 + 20 * 60 * 1000),
+    barbero: 'Nicole Ponce',
+    isAvailable: false
+  },
+];
+
+const eventStyleGetter = (event, start, end, isSelected) => {
+  const backgroundColor = barberColors[event.barbero] || '#E1AD01';
+  const style = {
+    backgroundColor,
+    borderRadius: '4px',
+    opacity: event.isAvailable ? 0.6 : 1,
+    color: 'white',
+    border: '0px',
+    display: 'block',
+    borderLeft: event.isAvailable ? '4px solid white' : 'none'
+  };
+  return { style };
+};
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('general');
@@ -169,8 +251,47 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
-
       </div>
+
+      {/* CALENDARIO DE DISPONIBILIDAD */}
+      <div className="mt-8 bg-marron p-6 rounded-xl border border-mostaza/30 shadow-glow-smoke">
+        <h3 className="text-xl font-serif text-mostaza tracking-widest uppercase mb-6 flex items-center gap-2">
+          <CalendarIcon size={20} className="text-perla/50" />
+          Calendario de Disponibilidad
+        </h3>
+        
+        {/* Leyenda de Colores */}
+        <div className="flex flex-wrap gap-4 mb-6">
+          {Object.entries(barberColors).map(([name, color]) => (
+            <div key={name} className="flex items-center gap-2 text-sm text-perla/70">
+              <span className="w-4 h-4 rounded-full" style={{ backgroundColor: color }}></span>
+              {name}
+            </div>
+          ))}
+        </div>
+
+        <div className="h-[600px] bg-white text-black p-4 rounded-lg overflow-x-auto">
+          <Calendar
+            localizer={localizer}
+            events={eventosAgenda}
+            startAccessor="start"
+            endAccessor="end"
+            eventPropGetter={eventStyleGetter}
+            messages={{
+              next: "Sig",
+              previous: "Ant",
+              today: "Hoy",
+              month: "Mes",
+              week: "Semana",
+              day: "Día"
+            }}
+            defaultView="week"
+            views={['month', 'week', 'day']}
+            style={{ minWidth: '800px' }}
+          />
+        </div>
+      </div>
+
     </div>
   );
 };
