@@ -33,40 +33,40 @@ function Landing() {
 
   const maestros = [
     {
-      id: 'luis', selectName: 'Luis Mendoza', nombre: 'Luis "Mano de Hierro"',
+      id: 'marcos', selectName: 'Marcos Thorne', nombre: 'Marcos "Mano de Hierro"',
       experiencia: '8 años de exp.', especialidad: 'Desvanecidos complejos y texturizados',
       resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.', img: '/media/luis.jpeg',
-      rating: 4.9, vcard: 'https://rosevcard.com/vcf/luis-mendoza.vcf'
+      rating: 4.9, vcard: 'http://localhost:3000/p/marcos-thorne-iron-anchor'
     },
     {
-      id: 'javier', selectName: 'Javier Espinoza', nombre: 'Javier "Ancla"',
-      experiencia: '10 años de exp.', especialidad: 'Ritual Clásico y afeitado tradicional',
+      id: 'alex', selectName: 'Alejandro "Alex" Vega', nombre: 'Alex "Ancla"',
+      experiencia: '12 años de exp.', especialidad: 'Ritual Clásico y afeitado tradicional',
       resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.', img: '/media/javier.jpeg',
-      rating: 5.0, vcard: 'https://rosevcard.com/vcf/javier-espinoza.vcf'
+      rating: 5.0, vcard: 'http://localhost:3000/p/alex-vega-iron-anchor'
     },
     {
-      id: 'omar', selectName: 'Omar Ortiz', nombre: 'Omar "Line"',
-      experiencia: '6 años de exp.', especialidad: 'Diseños urbanos y Hair Tattoo',
+      id: 'diego', selectName: 'Diego Navarro', nombre: 'Diego "Line"',
+      experiencia: '5 años de exp.', especialidad: 'Diseños urbanos y Hair Tattoo',
       resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.', img: '/media/omar.jpeg',
-      rating: 4.8, vcard: 'https://rosevcard.com/vcf/omar-ortiz.vcf'
+      rating: 4.8, vcard: 'http://localhost:3000/p/diego-navarro-iron-anchor'
     },
     {
-      id: 'mateo', selectName: 'Mateo Ríos', nombre: 'Mateo "Express"',
-      experiencia: '5 años de exp.', especialidad: 'Limpieza de contornos y ejecutivos',
+      id: 'mateo', selectName: 'Mateo Rivas', nombre: 'Mateo "Express"',
+      experiencia: '7 años de exp.', especialidad: 'Limpieza de contornos y ejecutivos',
       resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.', img: '/media/mateo.jpeg',
-      rating: 4.9, vcard: 'https://rosevcard.com/vcf/mateo-rios.vcf'
+      rating: 4.7, vcard: 'http://localhost:3000/p/mateo-rivas-iron-anchor'
     },
     {
-      id: 'nicole', selectName: 'Nicole Ponce', nombre: 'Nicole "Experiencia"',
-      experiencia: '11 años de exp.', especialidad: 'Cortes clásicos y asesoría de imagen',
+      id: 'elena', selectName: 'Elena Salcedo', nombre: 'Elena "Experiencia"',
+      experiencia: '10 años de exp.', especialidad: 'Cortes clásicos y asesoría de imagen',
       resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.', img: '/media/nicole.jpeg',
-      rating: 5.0, vcard: 'https://rosevcard.com/vcf/nicole-ponce.vcf'
+      rating: 4.9, vcard: 'http://localhost:3000/p/elena-salcedo-iron-anchor'
     },
     {
-      id: 'alan', selectName: 'Alan Castro', nombre: 'Alan "Precision"',
-      experiencia: '7 años de exp.', especialidad: 'Combo Ejecutivo (Cabello + Barba)',
+      id: 'lucas', selectName: 'Lucas Castillo', nombre: 'Lucas "Precisión"',
+      experiencia: '6 años de exp.', especialidad: 'Combo Ejecutivo (Cabello + Barba)',
       resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.', img: '/media/alan.jpeg',
-      rating: 4.9, vcard: 'https://rosevcard.com/vcf/alan-castro.vcf'
+      rating: 4.8, vcard: 'http://localhost:3000/p/lucas-castillo-iron-anchor'
     }
   ];
 

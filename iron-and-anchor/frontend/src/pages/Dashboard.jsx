@@ -46,12 +46,12 @@ const agendaHoy = [
 ];
 
 const barberColors = {
-  'Luis Mendoza': '#3b82f6', // azul
-  'Javier Espinoza': '#10b981', // verde
-  'Omar Ortiz': '#f59e0b', // naranja
-  'Mateo Ríos': '#ef4444', // rojo
-  'Nicole Ponce': '#8b5cf6', // morado
-  'Alan Castro': '#ec4899', // rosa
+  'Marcos Thorne': '#3b82f6', // azul
+  'Alejandro "Alex" Vega': '#10b981', // verde
+  'Diego Navarro': '#f59e0b', // naranja
+  'Mateo Rivas': '#ef4444', // rojo
+  'Elena Salcedo': '#8b5cf6', // morado
+  'Lucas Castillo': '#ec4899', // rosa
 };
 
 const getBaseDate = () => {
@@ -62,38 +62,38 @@ const getBaseDate = () => {
 
 const eventosAgenda = [
   {
-    title: 'Luis Mendoza (Disponible)',
+    title: 'Marcos Thorne (Disponible)',
     start: new Date(getBaseDate().getTime() + 10 * 60 * 60 * 1000),
     end: new Date(getBaseDate().getTime() + 14 * 60 * 60 * 1000),
-    barbero: 'Luis Mendoza',
+    barbero: 'Marcos Thorne',
     isAvailable: true
   },
   {
     title: 'Roberto Gómez - Corte',
     start: new Date(getBaseDate().getTime() + 10 * 60 * 60 * 1000),
     end: new Date(getBaseDate().getTime() + 11 * 60 * 60 * 1000),
-    barbero: 'Luis Mendoza',
+    barbero: 'Marcos Thorne',
     isAvailable: false
   },
   {
-    title: 'Javier Espinoza (Disponible)',
+    title: 'Alejandro Vega (Disponible)',
     start: new Date(getBaseDate().getTime() + 11 * 60 * 60 * 1000),
     end: new Date(getBaseDate().getTime() + 18 * 60 * 60 * 1000),
-    barbero: 'Javier Espinoza',
+    barbero: 'Alejandro "Alex" Vega',
     isAvailable: true
   },
   {
-    title: 'Nicole Ponce (Disponible)',
+    title: 'Elena Salcedo (Disponible)',
     start: new Date(getBaseDate().getTime() + 13 * 60 * 60 * 1000),
     end: new Date(getBaseDate().getTime() + 19 * 60 * 60 * 1000),
-    barbero: 'Nicole Ponce',
+    barbero: 'Elena Salcedo',
     isAvailable: true
   },
   {
     title: 'Ernesto Paz - Signature',
     start: new Date(getBaseDate().getTime() + 15 * 60 * 60 * 1000 + 45 * 60 * 1000),
     end: new Date(getBaseDate().getTime() + 16 * 60 * 60 * 1000 + 20 * 60 * 1000),
-    barbero: 'Nicole Ponce',
+    barbero: 'Elena Salcedo',
     isAvailable: false
   },
 ];
