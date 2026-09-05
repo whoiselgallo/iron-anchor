@@ -186,6 +186,9 @@ function Landing() {
                     <button onClick={() => alert(`Conectando pasarela dividida para pago a silla de ${m.selectName}...`)} className="w-full bg-perla text-marron hover:bg-mostaza hover:text-marron font-bold py-3 rounded text-sm uppercase tracking-wider transition shadow-[0_0_10px_rgba(248,246,240,0.3)] flex justify-center items-center gap-2 mt-2">
                       <CreditCard size={16} /> Pagar Silla
                     </button>
+                    <a href={m.vcard} target="_blank" rel="noopener noreferrer" className="w-full mt-2 bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-2 rounded text-xs uppercase tracking-wider transition flex justify-center items-center gap-2">
+                      <Download size={14} /> ROSE vCard
+                    </a>
                   </div>
                 </div>
               </div>
