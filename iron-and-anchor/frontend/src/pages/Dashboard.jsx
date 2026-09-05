@@ -100,7 +100,7 @@ const Dashboard = () => {
               <TrendingUp size={20} className="text-perla/50" />
             </div>
             <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99%" height="100%">
                 <LineChart data={metricasMensuales}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#5c3a21" />
                   <XAxis dataKey="name" stroke="#F8F6F0" />
@@ -117,7 +117,7 @@ const Dashboard = () => {
           <div className="bg-marron p-6 rounded-xl border border-marron shadow-glow-smoke">
             <h3 className="text-xl font-serif text-mostaza tracking-widest uppercase mb-6">Métricas por Silla (Stripe Connect)</h3>
             <div className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="99%" height="100%">
                 <BarChart data={metricasBarberos}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#5c3a21" />
                   <XAxis dataKey="nombre" stroke="#F8F6F0" fontSize={12} />

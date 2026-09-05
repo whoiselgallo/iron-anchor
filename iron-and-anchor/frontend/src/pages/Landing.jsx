@@ -152,7 +152,7 @@ function Landing() {
                 
                 <div className="relative mb-6 mx-auto w-40 h-40 rounded-full">
                   <div className="absolute inset-0 bg-mostaza rounded-full blur-xl opacity-0 group-hover:opacity-60 transition duration-500 transform scale-110"></div>
-                  <img src={m.img} alt={m.nombre} className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
+                  <img src={m.img} alt={m.nombre} loading="lazy" className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
                 </div>
 
                 {/* BARRA DE RESEÑA */}
@@ -222,7 +222,7 @@ function Landing() {
                       <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold"><span className="text-perla">{s.precio}</span><span className="text-mostaza">| {s.tiempo}</span></div>
                       <p className="text-perla/70 text-sm leading-relaxed">{s.desc}</p>
                     </div>
-                    <div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} className="w-full h-full object-cover" /></div></>
+                    <div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} loading="lazy" className="w-full h-full object-cover" /></div></>
                 )}
               </div>
             ))}
