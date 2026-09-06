@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import BookingModal from '../components/BookingModal';
 import axios from 'axios';
 import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Phone, Mail, CreditCard, Bell, Star, Download } from 'lucide-react';
@@ -37,37 +37,43 @@ function Landing() {
       id: 'marcos', selectName: 'Marcos Thorne', nombre: 'Marcos "Mano de Hierro"',
       experiencia: '8 años de exp.', especialidad: 'Desvanecidos complejos y texturizados',
       resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.', img: '/media/luis.jpeg',
-      rating: 4.9, vcard: 'http://localhost:3000/p/marcos-thorne-iron-anchor'
+      rating: 4.9, vcard: 'http://localhost:3000/p/marcos-thorne-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     },
     {
       id: 'alex', selectName: 'Alejandro "Alex" Vega', nombre: 'Alex "Ancla"',
       experiencia: '12 años de exp.', especialidad: 'Ritual Clásico y afeitado tradicional',
       resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.', img: '/media/javier.jpeg',
-      rating: 5.0, vcard: 'http://localhost:3000/p/alex-vega-iron-anchor'
+      rating: 5.0, vcard: 'http://localhost:3000/p/alex-vega-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     },
     {
       id: 'diego', selectName: 'Diego Navarro', nombre: 'Diego "Line"',
       experiencia: '5 años de exp.', especialidad: 'Diseños urbanos y Hair Tattoo',
       resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.', img: '/media/omar.jpeg',
-      rating: 4.8, vcard: 'http://localhost:3000/p/diego-navarro-iron-anchor'
+      rating: 4.8, vcard: 'http://localhost:3000/p/diego-navarro-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     },
     {
       id: 'mateo', selectName: 'Mateo Rivas', nombre: 'Mateo "Express"',
       experiencia: '7 años de exp.', especialidad: 'Limpieza de contornos y ejecutivos',
       resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.', img: '/media/mateo.jpeg',
-      rating: 4.7, vcard: 'http://localhost:3000/p/mateo-rivas-iron-anchor'
+      rating: 4.7, vcard: 'http://localhost:3000/p/mateo-rivas-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     },
     {
       id: 'elena', selectName: 'Elena Salcedo', nombre: 'Elena "Experiencia"',
       experiencia: '10 años de exp.', especialidad: 'Cortes clásicos y asesoría de imagen',
       resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.', img: '/media/nicole.jpeg',
-      rating: 4.9, vcard: 'http://localhost:3000/p/elena-salcedo-iron-anchor'
+      rating: 4.9, vcard: 'http://localhost:3000/p/elena-salcedo-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     },
     {
       id: 'lucas', selectName: 'Lucas Castillo', nombre: 'Lucas "Precisión"',
       experiencia: '6 años de exp.', especialidad: 'Combo Ejecutivo (Cabello + Barba)',
       resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.', img: '/media/alan.jpeg',
-      rating: 4.8, vcard: 'http://localhost:3000/p/lucas-castillo-iron-anchor'
+      rating: 4.8, vcard: 'http://localhost:3000/p/lucas-castillo-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
     }
   ];
 
@@ -164,7 +170,7 @@ function Landing() {
                     ))}
                     <span className="text-perla font-bold ml-2 text-sm">{m.rating.toFixed(1)}/5.0</span>
                   </div>
-                  <a href={`https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID_HERE`} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider text-mostaza hover:text-marron hover:bg-mostaza border border-mostaza px-3 py-1 rounded-full transition">
+                  <a href={m.googleReview || "https://maps.app.goo.gl/MDd4DLhyLm2aRjh76"} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider text-mostaza hover:text-marron hover:bg-mostaza border border-mostaza px-3 py-1 rounded-full transition">
                     Calificar en Google
                   </a>
                 </div>
