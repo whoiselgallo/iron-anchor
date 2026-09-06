@@ -9,6 +9,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import {
   Scissors,
+  Camera,
   Anchor,
   Calendar as CalendarIcon,
   User,
@@ -281,9 +282,13 @@ function Landing() {
 
       {/* NAVBAR */}
       <nav className="border-b-4 border-mostaza bg-marron py-4 px-4 md:px-8 flex justify-between items-center sticky top-0 z-40 shadow-2xl">
-        <div className="flex items-center gap-3 text-perla font-serif text-xl md:text-2xl tracking-widest uppercase">
-          <Anchor size={28} className="text-mostaza" />
-          <span>IRON & ANCHOR</span>
+        <div className="flex items-center gap-3 text-perla font-serif text-xl md:text-2xl tracking-widest uppercase group cursor-pointer">
+          <img
+            src="/media/logo.png"
+            alt="Iron & Anchor Logo"
+            className="w-10 h-10 md:w-11 md:h-11 object-contain drop-shadow-[0_0_12px_rgba(225,173,1,0.6)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
+          />
+          <span className="tracking-[0.15em] font-extrabold">IRON & ANCHOR</span>
         </div>
         <div className="flex items-center gap-3 md:gap-6">
           <button
@@ -325,6 +330,13 @@ function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-marron/60 to-marron/95"></div>
 
         <div className="relative z-10 w-[75vw] max-w-6xl mx-auto flex flex-col items-center text-center">
+          <div className="flex flex-col items-center mb-5">
+            <img
+              src="/media/logo.png"
+              alt="Iron & Anchor Emblema"
+              className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 object-contain drop-shadow-[0_0_25px_rgba(225,173,1,0.6)] hover:scale-105 transition-transform duration-500"
+            />
+          </div>
           <span className="inline-flex items-center gap-2 bg-mostaza/20 border border-mostaza/50 text-mostaza px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
             <Clock size={14} /> Horario Oficial: 9:00 AM a 4:00 PM • Citas Cada Hora
           </span>
@@ -593,10 +605,47 @@ function Landing() {
               </button>
             </div>
 
-            {/* Formulario lateral de reserva */}
-            <div className="bg-marron p-7 rounded-xl border border-mostaza/30 shadow-glow-smoke text-perla space-y-4">
-              <h3 className="text-xl font-serif text-mostaza tracking-widest uppercase">Reserva Rápida de Silla</h3>
-              <div className="space-y-4">
+            {/* ÁREA DE DISEÑO CON ASPECTO DE CELULAR & CÁMARA */}
+            <div className="relative mx-auto w-full max-w-sm sm:max-w-md bg-[#120B07] p-4 sm:p-5 rounded-[44px] border-[5px] border-mostaza/60 shadow-[0_0_35px_rgba(225,173,1,0.35)] text-perla space-y-4">
+              {/* Notch y Cámara del Celular con Logotipo */}
+              <div className="flex justify-center items-center gap-3 pb-2 pt-1 border-b border-mostaza/20">
+                <div className="flex items-center gap-2 bg-[#2A1A0F] px-4 py-1.5 rounded-full border border-mostaza/40 shadow-inner">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping inline-block"></span>
+                  {/* Lente de la cámara con el nuevo logotipo integrado */}
+                  <div className="relative flex items-center justify-center">
+                    <img
+                      src="/media/logo.png"
+                      alt="Cámara Iron and Anchor"
+                      className="w-7 h-7 object-contain rounded-full p-0.5 border border-mostaza bg-black/90 shadow-[0_0_8px_rgba(225,173,1,0.8)]"
+                    />
+                    <div className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-red-600 rounded-full border border-white"></div>
+                  </div>
+                  <span className="text-[11px] font-mono uppercase tracking-widest text-mostaza font-bold flex items-center gap-1">
+                    <Camera size={13} className="text-mostaza" /> Cam Visagismo AR
+                  </span>
+                </div>
+              </div>
+
+              {/* Pantalla del Celular */}
+              <div className="bg-marron/95 p-5 rounded-[28px] border border-mostaza/30 space-y-4 shadow-inner">
+                <div className="flex items-center justify-between pb-3 border-b border-mostaza/20">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src="/media/logo.png"
+                      alt="App Icon"
+                      className="w-9 h-9 object-contain rounded-xl p-1 bg-black/80 border border-mostaza/50 shadow-md"
+                    />
+                    <div>
+                      <h3 className="text-sm font-serif text-mostaza tracking-widest uppercase font-bold leading-none">Iron & Anchor Mobile</h3>
+                      <span className="text-[10px] text-perla/60 font-mono">App Oficial de Reservas</span>
+                    </div>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500/50 font-bold uppercase tracking-wider">
+                    En Vivo
+                  </span>
+                </div>
+
+                <div className="space-y-4">
                 <div>
                   <label className="flex items-center gap-2 mb-1.5 text-perla/80 font-bold text-xs uppercase tracking-wide">
                     <User size={14} /> Barbero Asignado
@@ -667,12 +716,18 @@ function Landing() {
                   ) : (
                     <button
                       onClick={() => setShowBookingModal(true)}
-                      className="w-full bg-mostaza text-marron hover:bg-perla py-3.5 font-serif text-base tracking-widest uppercase transition flex justify-center items-center gap-2 rounded-lg font-bold shadow-glow-smoke"
+                      className="w-full bg-mostaza text-marron hover:bg-perla py-3.5 font-serif text-base tracking-widest uppercase transition flex justify-center items-center gap-2 rounded-xl font-bold shadow-glow-smoke"
                     >
                       <CheckCircle2 size={18} /> Abrir Modal de Reserva y Pago
                     </button>
                   )}
                 </div>
+              </div>
+              </div>
+
+              {/* Barra inferior del Celular (Home Bar) */}
+              <div className="flex justify-center pt-2 pb-1">
+                <div className="w-32 h-1.5 bg-mostaza/50 rounded-full"></div>
               </div>
             </div>
 
@@ -704,8 +759,12 @@ function Landing() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col items-center md:items-start">
-            <div className="flex items-center gap-3 text-perla font-serif text-3xl tracking-widest uppercase mb-4">
-              <Anchor size={36} className="text-mostaza" />
+            <div className="flex items-center gap-4 text-perla font-serif text-3xl tracking-widest uppercase mb-4">
+              <img
+                src="/media/logo.png"
+                alt="Iron & Anchor Emblema"
+                className="w-14 h-14 object-contain drop-shadow-[0_0_15px_rgba(225,173,1,0.6)]"
+              />
               <span>IRON & ANCHOR</span>
             </div>
             <p className="text-perla/70 font-medium mb-6 text-center md:text-left max-w-sm">

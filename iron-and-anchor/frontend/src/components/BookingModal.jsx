@@ -199,7 +199,11 @@ export default function BookingModal({
         {/* Encabezado */}
         <div className="flex items-center justify-between px-6 py-4 bg-marron border-b border-mostaza/30 flex-shrink-0">
           <div className="flex items-center gap-3">
-            <span className="w-3 h-3 rounded-full bg-mostaza animate-pulse"></span>
+            <img
+              src="/media/logo.png"
+              alt="Logo"
+              className="w-9 h-9 object-contain drop-shadow-[0_0_8px_rgba(225,173,1,0.6)]"
+            />
             <div>
               <h2 className="text-xl font-serif text-perla uppercase tracking-widest leading-none">
                 {modoSinCosto ? "Agendar Cita (Sin Costo)" : "Pagar y Reservar Silla"}

@@ -39,9 +39,11 @@ export default function SubscriptionModal({ isOpen, onClose, onSubscribed }) {
         {/* Encabezado */}
         <div className="flex items-center justify-between px-6 py-5 bg-marron border-b border-mostaza/30">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-mostaza/20 rounded-full text-mostaza border border-mostaza/40">
-              <Award size={24} />
-            </div>
+            <img
+              src="/media/logo.png"
+              alt="Logo VIP"
+              className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(225,173,1,0.6)]"
+            />
             <div>
               <h3 className="text-xl font-serif text-perla uppercase tracking-widest leading-none">Club VIP Iron & Anchor</h3>
               <p className="text-mostaza font-bold text-xs uppercase tracking-wider mt-1">Beneficios Exclusivos & Fidelidad</p>
