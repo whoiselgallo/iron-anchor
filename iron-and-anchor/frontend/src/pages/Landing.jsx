@@ -295,29 +295,30 @@ function Landing() {
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-marron/60 to-marron/95"></div>
 
-        <div className="relative z-10 max-w-4xl px-4">
+        <div className="relative z-10 w-[75vw] max-w-6xl mx-auto flex flex-col items-center text-center">
           <span className="inline-flex items-center gap-2 bg-mostaza/20 border border-mostaza/50 text-mostaza px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
             <Clock size={14} /> Horario Oficial: 9:00 AM a 4:00 PM • Citas Cada Hora
           </span>
-          <h1 className="text-5xl md:text-8xl font-serif text-perla mb-4 tracking-[0.1em] uppercase drop-shadow-2xl">
-            Iron & Anchor
+          <h1 className="w-full font-serif text-perla mb-6 uppercase drop-shadow-2xl font-black leading-[0.85] tracking-normal text-[clamp(2.8rem,11.5vw,8.5rem)]">
+            <span className="block">IRON &amp;</span>
+            <span className="block">ANCHOR</span>
           </h1>
-          <p className="text-xl md:text-3xl text-mostaza font-bold tracking-widest uppercase mb-8">
-            Estilo • Precisión • Rapidez
+          <p className="w-full text-sm sm:text-lg md:text-2xl lg:text-3xl text-mostaza font-bold uppercase mb-8 tracking-[0.25em] sm:tracking-[0.35em] md:tracking-[0.5em] leading-relaxed">
+            ESTILO • PRECISIÓN • RAPIDEZ
           </p>
-          <p className="text-base md:text-lg max-w-2xl mx-auto text-perla/90 mb-10 font-medium leading-relaxed drop-shadow-md">
+          <p className="w-full text-sm sm:text-base md:text-xl text-perla/90 mb-10 font-medium leading-relaxed drop-shadow-md text-center">
             El Refugio del Hombre Moderno en Mexicali. Citas estrictamente organizadas cada hora con 15 minutos dedicados a la sanitización y preparación de la silla.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="w-full flex flex-col sm:flex-row justify-center items-center gap-4">
             <button
               onClick={() => setShowBookingModal(true)}
-              className="inline-flex items-center gap-3 bg-perla text-marron font-bold py-4 px-10 rounded-sm text-lg hover:bg-mostaza transition uppercase tracking-[0.15em] shadow-[0_0_30px_rgba(248,246,240,0.4)]"
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-3 bg-perla text-marron font-bold py-4 px-8 md:px-12 rounded text-base md:text-lg hover:bg-mostaza transition uppercase tracking-[0.15em] shadow-[0_0_30px_rgba(248,246,240,0.4)]"
             >
               <Scissors size={20} /> Agendar Cita
             </button>
             <button
               onClick={() => setShowSubModal(true)}
-              className="inline-flex items-center gap-2 bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-4 px-8 rounded-sm text-lg transition uppercase tracking-[0.15em]"
+              className="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-4 px-6 md:px-8 rounded text-base md:text-lg transition uppercase tracking-[0.15em]"
             >
               <Gift size={20} /> Club VIP (20% OFF)
             </button>
