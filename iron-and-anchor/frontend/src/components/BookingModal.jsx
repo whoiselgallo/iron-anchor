@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { X, ChevronRight, ChevronLeft, Check, Star } from "lucide-react";
 
 const SERVICIOS = [
@@ -12,10 +12,10 @@ const SERVICIOS = [
 const BARBEROS = [
   { id: "marcos", nombre: "Marcos Thorne", alias: '"Mano de Hierro"', rating: 4.9, img: "/media/luis.jpeg" },
   { id: "alex", nombre: 'Alejandro "Alex" Vega', alias: '"Ancla"', rating: 5.0, img: "/media/javier.jpeg" },
-  { id: "diego", nombre: "Diego Navarro", alias: '"Line"', rating: 4.8, img: "/media/omar.jpeg" },
+  { id: "david", nombre: "David Castillo", alias: '"Line"', rating: 4.8, img: "/media/omar.jpeg" },
   { id: "mateo", nombre: "Mateo Rivas", alias: '"Express"', rating: 4.7, img: "/media/mateo.jpeg" },
   { id: "elena", nombre: "Elena Salcedo", alias: '"Experiencia"', rating: 4.9, img: "/media/nicole.jpeg" },
-  { id: "lucas", nombre: "Lucas Castillo", alias: '"Precision"', rating: 4.8, img: "/media/alan.jpeg" },
+  { id: "lucas", nombre: "Lucas Mendoza", alias: '"Precision"', rating: 4.8, img: "/media/alan.jpeg" },
 ];
 
 const HORARIOS = ["10:00 AM","10:45 AM","11:30 AM","12:15 PM","01:00 PM","01:45 PM","03:00 PM","03:45 PM","04:30 PM","05:15 PM"];

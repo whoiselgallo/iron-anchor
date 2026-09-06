@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from "recharts";
 import { DollarSign, Users, Calendar as CalendarIcon, TrendingUp, Anchor, Activity, Clock, User, CheckCircle, XCircle, RefreshCw, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ const locales = { "es": es };
 const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
 
 // ─── CONSTANTES ────────────────────────────────────────────────────────────────
-const BARBEROS = ["Marcos Thorne", 'Alejandro "Alex" Vega', "Diego Navarro", "Mateo Rivas", "Elena Salcedo", "Lucas Castillo"];
+const BARBEROS = ["Marcos Thorne", 'Alejandro "Alex" Vega', "David Castillo", "Mateo Rivas", "Elena Salcedo", "Lucas Mendoza"];
 const SERVICIOS_TIPOS = ["Todos","Corte","Barba","Combo","Hair Tattoo","Express"];
 const ESTADOS = ["Completado","No Asistio","Reagendado","Agendado"];
 const CLIENTES = ["Roberto Gomez","Carlos Trejo","David Ruiz","Ernesto Paz","Marco Silva","Ivan Torres","Luis Perez","Jorge Mendez","Andres Castro","Felipe Rios","Saul Vega","Ramon Diaz","Victor Luna","Eduardo Reyes","Pablo Moreno","Gabriel Ortiz","Oscar Herrera","Daniel Soto","Ricardo Nunez","Sergio Flores"];
@@ -21,10 +21,10 @@ const PRECIOS = { "Corte": 250, "Barba": 200, "Combo": 400, "Hair Tattoo": 150, 
 const barberColors = {
   "Marcos Thorne": "#3b82f6",
   'Alejandro "Alex" Vega': "#10b981",
-  "Diego Navarro": "#f59e0b",
+  "David Castillo": "#f59e0b",
   "Mateo Rivas": "#ef4444",
   "Elena Salcedo": "#8b5cf6",
-  "Lucas Castillo": "#ec4899",
+  "Lucas Mendoza": "#ec4899",
 };
 
 const estadoColors = { "Completado": "#10b981", "No Asistio": "#ef4444", "Reagendado": "#f59e0b", "Agendado": "#3b82f6" };
