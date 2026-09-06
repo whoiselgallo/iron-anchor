@@ -41,6 +41,8 @@ function Landing() {
 
   // Configuración para el modal de agendado
   const [bookingConfig, setBookingConfig] = useState({
+    step: 0,
+    modoSinCosto: false,
     serviceId: 'signature',
     barberoId: 'marcos',
     fecha: hoyStr,
@@ -110,24 +112,49 @@ function Landing() {
     }
   };
 
-  // Abrir modal con servicio específico
+  // Abrir modal con servicio específico (desde menú de especialidades)
   const handleAbrirServicio = (servicioId) => {
-    setBookingConfig((prev) => ({ ...prev, serviceId }));
+    setBookingConfig((prev) => ({
+      ...prev,
+      step: 0,
+      modoSinCosto: false,
+      serviceId
+    }));
     setShowBookingModal(true);
   };
 
-  // Abrir modal desde tarjeta de barbero
-  const handleAbrirBarbero = (barberoId) => {
+  // Abrir modal desde tarjeta de barbero - Modo Agendar Cita (Sin Costo)
+  const handleAbrirBarberoSinCosto = (barberoId) => {
     const fecha = fechasBarberos[barberoId] || hoyStr;
     const hora = horasBarberos[barberoId] || '10:00 AM';
     setBookingConfig((prev) => ({
       ...prev,
+      step: 3,
+      modoSinCosto: true,
       barberoId,
       fecha,
       hora
     }));
     setShowBookingModal(true);
   };
+
+  // Abrir modal desde tarjeta de barbero - Modo Pagar Silla (Anticipo / Checkout directo)
+  const handleAbrirBarberoPagoDirecto = (barberoId) => {
+    const fecha = fechasBarberos[barberoId] || hoyStr;
+    const hora = horasBarberos[barberoId] || '10:00 AM';
+    setBookingConfig((prev) => ({
+      ...prev,
+      step: 3,
+      modoSinCosto: false,
+      barberoId,
+      fecha,
+      hora
+    }));
+    setShowBookingModal(true);
+  };
+
+  // Fallback genérico
+  const handleAbrirBarbero = handleAbrirBarberoPagoDirecto;
 
   const handleBookingGeneral = async () => {
     if (!reserva.fecha) {
@@ -228,6 +255,8 @@ function Landing() {
       <BookingModal
         isOpen={showBookingModal}
         onClose={() => setShowBookingModal(false)}
+        initialStep={bookingConfig.step}
+        initialModoSinCosto={bookingConfig.modoSinCosto}
         initialServiceId={bookingConfig.serviceId}
         initialBarberoId={bookingConfig.barberoId}
         initialFecha={bookingConfig.fecha}
@@ -447,11 +476,20 @@ function Landing() {
                         {alertaActiva ? `Alertas SMS Activas (${alertaActiva})` : 'Activar Alertas SMS'}
                       </button>
 
-                      {/* Botón Pagar / Reservar Silla */}
+                      {/* Botón 1: Agendar Cita (Sin Costo) */}
                       <button
                         type="button"
-                        onClick={() => handleAbrirBarbero(m.id)}
-                        className="w-full bg-perla text-marron hover:bg-mostaza font-bold py-2.5 rounded text-xs uppercase tracking-wider transition shadow-[0_0_10px_rgba(248,246,240,0.3)] flex justify-center items-center gap-2"
+                        onClick={() => handleAbrirBarberoSinCosto(m.id)}
+                        className="w-full bg-transparent border border-emerald-500/80 text-emerald-400 hover:bg-emerald-600 hover:text-white font-bold py-2 rounded text-xs uppercase tracking-wider transition flex justify-center items-center gap-2 shadow-[0_0_8px_rgba(16,185,129,0.2)]"
+                      >
+                        <CalendarIcon size={14} /> Agendar Cita (Sin Costo)
+                      </button>
+
+                      {/* Botón 2: Pagar Silla (Dirige directo a pantalla de cobro con información precargada) */}
+                      <button
+                        type="button"
+                        onClick={() => handleAbrirBarberoPagoDirecto(m.id)}
+                        className="w-full bg-mostaza text-marron hover:bg-perla font-bold py-2.5 rounded text-xs uppercase tracking-wider transition shadow-glow-smoke flex justify-center items-center gap-2"
                       >
                         <CreditCard size={15} /> Pagar Silla ({horaActual})
                       </button>

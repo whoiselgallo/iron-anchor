@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { X, ChevronRight, ChevronLeft, Check, Star, Clock, ShieldCheck, Sparkles, AlertCircle, Phone, Calendar as CalendarIcon, MessageSquare, Gift, CreditCard, Scissors } from "lucide-react";
 
 export const SERVICIOS = [
@@ -34,6 +34,8 @@ const STEPS = ["Servicio", "Barbero", "Fecha & Horario", "Confirmar y Pagar"];
 export default function BookingModal({
   isOpen,
   onClose,
+  initialStep = 0,
+  initialModoSinCosto = false,
   initialServiceId = null,
   initialBarberoId = null,
   initialFecha = null,
@@ -41,6 +43,7 @@ export default function BookingModal({
   onBookingSuccess
 }) {
   const [step, setStep] = useState(0);
+  const [modoSinCosto, setModoSinCosto] = useState(false);
   const [selServicio, setSelServicio] = useState(null);
   const [selBarbero, setSelBarbero] = useState(null);
   const [selFecha, setSelFecha] = useState("");
@@ -53,9 +56,16 @@ export default function BookingModal({
   const [visitasCliente, setVisitasCliente] = useState(1);
   const [checkInHecho, setCheckInHecho] = useState(false);
 
-  // Inicialización de parámetros
+  // Inicialización de parámetros al abrir modal
   useEffect(() => {
     if (!isOpen) return;
+
+    // Ajustar step inicial y modo
+    setStep(typeof initialStep === 'number' ? initialStep : 0);
+    setModoSinCosto(Boolean(initialModoSinCosto));
+    setDone(false);
+    setSmsEnviado(null);
+    setCheckInHecho(false);
 
     // Fecha predeterminada de hoy
     const hoyStr = new Date().toISOString().split("T")[0];
@@ -77,6 +87,8 @@ export default function BookingModal({
 
     if (initialHora) {
       setSelHora(initialHora);
+    } else if (!selHora) {
+      setSelHora(SLOTS_DISPONIBLES[0].hora);
     }
 
     // Revisar si cliente tiene descuento VIP registrado
@@ -96,7 +108,7 @@ export default function BookingModal({
         console.error(e);
       }
     }
-  }, [isOpen, initialServiceId, initialBarberoId, initialFecha, initialHora]);
+  }, [isOpen, initialStep, initialModoSinCosto, initialServiceId, initialBarberoId, initialFecha, initialHora]);
 
   if (!isOpen) return null;
 
@@ -104,19 +116,19 @@ export default function BookingModal({
   const next = () => setStep((s) => Math.min(s + 1, 3));
 
   const canNext = () => {
-    if (step === 0) return !!selServicio;
-    if (step === 1) return !!selBarbero;
-    if (step === 2) return !!selFecha && !!selHora;
+    if (step === 0) return Boolean(selServicio);
+    if (step === 1) return Boolean(selBarbero);
+    if (step === 2) return Boolean(selFecha && selHora);
     return nombre.trim().length >= 3 && telefonoCliente.trim().length >= 8;
   };
 
   const handleConfirmarCita = () => {
     // Cálculo de precio con descuento si aplica
     const precioBase = selServicio?.precio || 250;
-    const precioFinal = descuentoVip ? Math.round(precioBase * 0.8) : precioBase;
+    const precioCobrado = modoSinCosto ? 0 : (descuentoVip ? Math.round(precioBase * 0.8) : precioBase);
 
     // Número de teléfono configurado para alertas del barbero
-    const alertasStorage = localStorage.getItem(`iron_barber_alert_${selBarbero?.id}`);
+    const alertasStorage = localStorage.getItem("iron_barber_alert_" + (selBarbero?.id || ""));
     const telBarberoAlert = alertasStorage || selBarbero?.telefono || "+52 686 123 4500";
 
     const nuevaCita = {
@@ -124,7 +136,8 @@ export default function BookingModal({
       cliente: nombre,
       telefonoCliente,
       servicio: selServicio?.nombre,
-      precio: precioFinal,
+      precio: precioCobrado,
+      modalidad: modoSinCosto ? "Cita Sin Costo (Pago en Sucursal)" : "Pago de Silla Anticipado (Stripe)",
       barbero: selBarbero?.nombre,
       barberoId: selBarbero?.id,
       fecha: selFecha,
@@ -143,9 +156,13 @@ export default function BookingModal({
     }
 
     // Disparar mensaje SMS al barbero
-    const textoSms = `Iron & Anchor: Cita confirmada con ${nombre} para "${selServicio?.nombre}" el ${selFecha} a las ${selHora}. Pago procesado en Stripe ($${precioFinal} MXN).`;
+    const detalleCobro = modoSinCosto 
+      ? "Agendada SIN COSTO (pago en sucursal al finalizar)" 
+      : "Pago de Silla procesado ($" + precioCobrado + " MXN)";
+    const textoSms = "Iron & Anchor: Cita confirmada con " + nombre + " para " + selServicio?.nombre + " el " + selFecha + " a las " + selHora + ". Modalidad: " + detalleCobro + ".";
+    
     setSmsEnviado({
-      destinatario: `${selBarbero?.nombre} (${telBarberoAlert})`,
+      destinatario: (selBarbero?.nombre || "Barbero") + " (" + telBarberoAlert + ")",
       mensaje: textoSms,
     });
 
@@ -184,7 +201,9 @@ export default function BookingModal({
           <div className="flex items-center gap-3">
             <span className="w-3 h-3 rounded-full bg-mostaza animate-pulse"></span>
             <div>
-              <h2 className="text-xl font-serif text-perla uppercase tracking-widest leading-none">Reserva tu Silla</h2>
+              <h2 className="text-xl font-serif text-perla uppercase tracking-widest leading-none">
+                {modoSinCosto ? "Agendar Cita (Sin Costo)" : "Pagar y Reservar Silla"}
+              </h2>
               <p className="text-mostaza font-bold text-xs uppercase tracking-wider mt-1">Horario Laboral 9:00 AM - 4:00 PM</p>
             </div>
           </div>
@@ -195,7 +214,7 @@ export default function BookingModal({
 
         {/* Notificación SMS / Alerta de texto enviada al Barbero */}
         {smsEnviado && (
-          <div className="bg-emerald-950/90 border-b border-emerald-500/50 px-5 py-3 text-xs text-emerald-200 flex items-start gap-2.5 animate-fadeIn">
+          <div className="bg-emerald-950/90 border-b border-emerald-500/50 px-5 py-3 text-xs text-emerald-200 flex items-start gap-2.5">
             <MessageSquare size={18} className="text-emerald-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-emerald-300">📲 Alerta SMS enviada al celular del barbero:</p>
@@ -210,7 +229,9 @@ export default function BookingModal({
             <div className="w-16 h-16 rounded-full bg-mostaza/20 border-2 border-mostaza flex items-center justify-center text-mostaza shadow-glow-smoke">
               <Check size={36} />
             </div>
-            <h3 className="text-2xl md:text-3xl font-serif text-perla uppercase tracking-wide">¡Cita & Silla Aseguradas!</h3>
+            <h3 className="text-2xl md:text-3xl font-serif text-perla uppercase tracking-wide">
+              {modoSinCosto ? "¡Cita Agendada con Éxito!" : "¡Cita & Silla Aseguradas!"}
+            </h3>
             
             <div className="bg-marron/80 p-5 rounded-xl border border-mostaza/30 w-full text-left space-y-2 text-sm">
               <div className="flex justify-between border-b border-mostaza/20 pb-2">
@@ -234,8 +255,12 @@ export default function BookingModal({
                 <span className="text-xs text-perla/90 font-medium">45 min atención + 15 min sanitización</span>
               </div>
               <div className="flex justify-between pt-1">
-                <span className="text-perla/70">Cobro Procesado (Stripe):</span>
-                <span className="font-bold text-xl text-mostaza">${precioConDescuento} MXN {descuentoVip && <span className="text-xs text-emerald-400 font-normal">(-20% VIP)</span>}</span>
+                <span className="text-perla/70">Modalidad de Pago:</span>
+                {modoSinCosto ? (
+                  <span className="font-bold text-base text-emerald-400">Sin Costo Anticipado ($0) • Pagar en Barbería</span>
+                ) : (
+                  <span className="font-bold text-xl text-mostaza">${precioConDescuento} MXN {descuentoVip && <span className="text-xs text-emerald-400 font-normal">(-20% VIP)</span>}</span>
+                )}
               </div>
             </div>
 
@@ -251,13 +276,13 @@ export default function BookingModal({
                 {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                   <div
                     key={num}
-                    className={`py-2 rounded-lg border text-xs font-bold flex flex-col items-center justify-center ${
+                    className={"py-2 rounded-lg border text-xs font-bold flex flex-col items-center justify-center " + (
                       num <= visitasCliente
                         ? "bg-mostaza text-marron border-mostaza shadow-[0_0_8px_rgba(225,173,1,0.4)]"
                         : num === 7
                         ? "bg-marron border-dashed border-mostaza text-mostaza"
                         : "bg-marron/40 border-perla/20 text-perla/30"
-                    }`}
+                    )}
                   >
                     <span>#{num}</span>
                     {num === 7 ? <Gift size={12} className={num <= visitasCliente ? "text-marron" : "text-mostaza"} /> : <Check size={10} />}
@@ -298,20 +323,45 @@ export default function BookingModal({
               {STEPS.map((s, i) => (
                 <button
                   key={s}
-                  onClick={() => i < step && setStep(i)}
-                  disabled={i > step}
-                  className={`flex-1 py-2.5 text-center text-[11px] font-bold uppercase tracking-wider transition ${
+                  onClick={() => i <= 3 && setStep(i)}
+                  className={"flex-1 py-2.5 text-center text-[11px] font-bold uppercase tracking-wider transition " + (
                     i === step
                       ? "text-mostaza border-b-2 border-mostaza bg-mostaza/10"
                       : i < step
                       ? "text-emerald-400 hover:bg-marron/30"
-                      : "text-perla/30 cursor-not-allowed"
-                  }`}
+                      : "text-perla/50 hover:text-perla"
+                  )}
                 >
                   {i < step && <Check size={10} className="inline mr-1" />}
                   {s}
                 </button>
               ))}
+            </div>
+
+            {/* Selector de Modo Rápido (Sin Costo vs Pago de Silla) */}
+            <div className="px-6 pt-3 pb-1 flex gap-2 bg-[#20130B]/90 border-b border-mostaza/20">
+              <button
+                type="button"
+                onClick={() => setModoSinCosto(false)}
+                className={"flex-1 py-1.5 px-2 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-1.5 " + (
+                  !modoSinCosto
+                    ? "bg-mostaza text-marron shadow-[0_0_10px_rgba(225,173,1,0.4)]"
+                    : "bg-transparent text-perla/60 hover:text-perla border border-perla/20"
+                )}
+              >
+                <CreditCard size={13} /> Pagar Silla (Anticipo)
+              </button>
+              <button
+                type="button"
+                onClick={() => setModoSinCosto(true)}
+                className={"flex-1 py-1.5 px-2 rounded-lg text-xs font-bold uppercase tracking-wider transition flex items-center justify-center gap-1.5 " + (
+                  modoSinCosto
+                    ? "bg-emerald-600 text-white shadow-[0_0_10px_rgba(16,185,129,0.4)]"
+                    : "bg-transparent text-perla/60 hover:text-perla border border-perla/20"
+                )}
+              >
+                <CalendarIcon size={13} /> Agendar Cita (Sin Costo)
+              </button>
             </div>
 
             {/* Contenedor con Scroll */}
@@ -324,16 +374,16 @@ export default function BookingModal({
                     <div
                       key={s.id}
                       onClick={() => setSelServicio(s)}
-                      className={`flex gap-4 items-center p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      className={"flex gap-4 items-center p-3.5 rounded-xl border-2 cursor-pointer transition-all " + (
                         selServicio?.id === s.id
                           ? "border-mostaza bg-mostaza/15 shadow-glow-smoke scale-[1.01]"
                           : "border-perla/10 bg-marron/60 hover:border-mostaza/40"
-                      }`}
+                      )}
                     >
                       <img src={s.img} alt={s.nombre} className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-mostaza/30" />
                       <div className="flex-1">
                         <div className="flex justify-between items-center">
-                          <h4 className={`font-serif text-base uppercase tracking-wider ${selServicio?.id === s.id ? "text-mostaza" : "text-perla"}`}>
+                          <h4 className={"font-serif text-base uppercase tracking-wider " + (selServicio?.id === s.id ? "text-mostaza" : "text-perla")}>
                             {s.nombre}
                           </h4>
                           <span className="font-bold text-mostaza font-mono">${s.precio} MXN</span>
@@ -355,11 +405,11 @@ export default function BookingModal({
                       <div
                         key={b.id}
                         onClick={() => setSelBarbero(b)}
-                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-3.5 ${
+                        className={"p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-3.5 " + (
                           selBarbero?.id === b.id
                             ? "border-mostaza bg-mostaza/15 shadow-glow-smoke scale-[1.01]"
                             : "border-perla/10 bg-marron/60 hover:border-mostaza/40"
-                        }`}
+                        )}
                       >
                         <img src={b.img} alt={b.nombre} className="w-14 h-14 rounded-full object-cover border-2 border-mostaza flex-shrink-0" />
                         <div className="flex-1 min-w-0">
@@ -413,14 +463,14 @@ export default function BookingModal({
                             key={slot.hora}
                             type="button"
                             onClick={() => setSelHora(slot.hora)}
-                            className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center ${
+                            className={"p-3 rounded-xl border text-center transition-all flex flex-col items-center justify-center " + (
                               isSelected
                                 ? "bg-mostaza text-marron border-mostaza font-bold shadow-[0_0_12px_rgba(225,173,1,0.5)] scale-105"
                                 : "bg-marron/70 border-perla/15 text-perla hover:border-mostaza/60 hover:bg-marron"
-                            }`}
+                            )}
                           >
                             <span className="text-sm font-bold font-mono">{slot.hora}</span>
-                            <span className={`text-[10px] mt-1 ${isSelected ? "text-marron font-semibold" : "text-perla/60"}`}>
+                            <span className={"text-[10px] mt-1 " + (isSelected ? "text-marron font-semibold" : "text-perla/60")}>
                               Disponible
                             </span>
                           </button>
@@ -431,42 +481,86 @@ export default function BookingModal({
                 </div>
               )}
 
-              {/* PASO 3: CONFIRMACIÓN, DATOS Y PAGO */}
+              {/* PASO 3: CONFIRMACIÓN, DATOS Y PAGO / AGENDADO DIRECTO */}
               {step === 3 && (
                 <div className="space-y-4">
-                  {/* Resumen */}
-                  <div className="bg-[#1E120A] p-4 rounded-xl border border-mostaza/30 space-y-2 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-perla/60">Servicio:</span>
-                      <span className="font-bold text-perla">{selServicio?.nombre}</span>
+                  {/* Tarjeta de Barbero y Cita Seleccionada */}
+                  <div className="bg-[#1E120A] p-4 rounded-xl border border-mostaza/40 space-y-3">
+                    <div className="flex items-center gap-3.5 pb-3 border-b border-mostaza/20">
+                      <img
+                        src={selBarbero?.img || "/media/luis.jpeg"}
+                        alt={selBarbero?.nombre}
+                        className="w-14 h-14 rounded-full object-cover border-2 border-mostaza flex-shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] uppercase font-bold text-mostaza tracking-widest block">Maestro Barbero Asignado</span>
+                        <h4 className="font-bold text-base text-perla truncate">{selBarbero?.nombre}</h4>
+                        <p className="text-xs text-mostaza font-medium">{selBarbero?.puesto} • {selBarbero?.alias}</p>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-perla/60">Barbero Asignado:</span>
-                      <span className="font-bold text-mostaza">{selBarbero?.nombre}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-perla/60">Fecha & Hora:</span>
-                      <span className="font-bold text-perla">{selFecha} a las {selHora}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-perla/60">Horario de Silla:</span>
-                      <span className="text-perla/80">{selHora} a {SLOTS_DISPONIBLES.find(s=>s.hora===selHora)?.finServicio || "45 min"} (15 min limpieza posterior)</span>
-                    </div>
-                    <div className="flex justify-between border-t border-mostaza/20 pt-2 text-sm font-bold">
-                      <span className="text-mostaza">Total a Pagar:</span>
-                      <span className="text-mostaza font-mono text-lg">
-                        ${precioConDescuento} MXN
-                        {descuentoVip && <span className="text-xs text-emerald-400 font-normal ml-2">(-20% VIP aplicado)</span>}
-                      </span>
+
+                    <div className="space-y-2 text-xs">
+                      {/* Selector o cambio de servicio en pantalla de cobro */}
+                      <div className="flex justify-between items-center">
+                        <span className="text-perla/60">Servicio Seleccionado:</span>
+                        <select
+                          value={selServicio?.id || SERVICIOS[0].id}
+                          onChange={(e) => {
+                            const found = SERVICIOS.find((s) => s.id === e.target.value);
+                            if (found) setSelServicio(found);
+                          }}
+                          className="bg-[#2A1A0F] border border-mostaza/40 text-mostaza font-bold text-xs rounded-lg px-2.5 py-1 focus:outline-none focus:border-mostaza"
+                        >
+                          {SERVICIOS.map((s) => (
+                            <option key={s.id} value={s.id} className="bg-[#2A1A0F] text-perla">
+                              {s.nombre} - ${s.precio} MXN
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="flex justify-between">
+                        <span className="text-perla/60">Fecha & Hora:</span>
+                        <span className="font-bold text-perla">{selFecha} a las {selHora}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-perla/60">Horario de Silla:</span>
+                        <span className="text-perla/80">{selHora} a {SLOTS_DISPONIBLES.find(s=>s.hora===selHora)?.finServicio || "45 min"} (15 min limpieza posterior)</span>
+                      </div>
+
+                      {/* Modalidad y Desglose */}
+                      <div className="flex justify-between border-t border-mostaza/20 pt-2.5 items-center">
+                        <div>
+                          <span className="text-xs font-bold text-mostaza block">
+                            {modoSinCosto ? "Modalidad de Reserva:" : "Total a Pagar (Stripe):"}
+                          </span>
+                          <span className="text-[10px] text-perla/60">
+                            {modoSinCosto ? "Cita libre de cargo anticipado" : "Garantiza el 100% de tu turno"}
+                          </span>
+                        </div>
+                        <div className="text-right">
+                          {modoSinCosto ? (
+                            <div>
+                              <span className="text-emerald-400 font-mono text-lg font-bold block">$0 MXN</span>
+                              <span className="text-[10px] text-perla/70">Pagas en el local: ${precioOriginal} MXN</span>
+                            </div>
+                          ) : (
+                            <span className="text-mostaza font-mono text-xl font-bold">
+                              ${precioConDescuento} MXN
+                              {descuentoVip && <span className="text-xs text-emerald-400 font-normal ml-2 block">(-20% VIP)</span>}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Banner 20% OFF si no está activo */}
-                  {!descuentoVip && (
+                  {/* Banner 20% OFF si no está activo y modo con cobro */}
+                  {!modoSinCosto && !descuentoVip && (
                     <div className="bg-mostaza/10 border border-mostaza/30 p-3 rounded-lg flex items-center justify-between text-xs">
                       <div>
-                        <span className="font-bold text-mostaza">¿Tienes código de descuento?</span>
-                        <p className="text-perla/70 text-[11px]">Los miembros del Club VIP reciben 20% OFF.</p>
+                        <span className="font-bold text-mostaza">¿Tienes membresía o código VIP?</span>
+                        <p className="text-perla/70 text-[11px]">Los miembros del Club VIP reciben 20% OFF en todos los cortes.</p>
                       </div>
                       <button
                         type="button"
@@ -491,7 +585,7 @@ export default function BookingModal({
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-bold uppercase tracking-wider text-perla/70 block mb-1">Teléfono Móvil (Para confirmación SMS):</label>
+                      <label className="text-xs font-bold uppercase tracking-wider text-perla/70 block mb-1">Teléfono Móvil (Para confirmación y SMS):</label>
                       <input
                         type="tel"
                         value={telefonoCliente}
@@ -504,7 +598,11 @@ export default function BookingModal({
 
                   <div className="p-3 bg-marron/60 rounded-lg border border-perla/10 text-[11px] text-perla/70 flex items-start gap-2">
                     <ShieldCheck size={16} className="text-mostaza flex-shrink-0 mt-0.5" />
-                    <span>Tu cita bloqueará la silla en la agenda central del barbero. Al confirmar se enviará una notificación SMS directa a su teléfono para su debida preparación.</span>
+                    <span>
+                      {modoSinCosto 
+                        ? "Tu cita se registrará en la agenda oficial del barbero y se le enviará un SMS automático de notificación. Podrás pagar al terminar en la barbería."
+                        : "Tu pago apartará tu horario de forma definitiva en la agenda central del barbero. Al confirmar se enviará una notificación SMS directa a su celular."}
+                    </span>
                   </div>
                 </div>
               )}
@@ -530,6 +628,15 @@ export default function BookingModal({
                 >
                   Siguiente <ChevronRight size={16} />
                 </button>
+              ) : modoSinCosto ? (
+                <button
+                  type="button"
+                  onClick={handleConfirmarCita}
+                  disabled={!canNext()}
+                  className="flex items-center gap-2 bg-emerald-600 text-white font-bold px-7 py-3 rounded-xl uppercase tracking-widest text-xs disabled:opacity-40 hover:bg-emerald-500 transition shadow-glow-smoke"
+                >
+                  <CalendarIcon size={16} /> Agendar Cita (Sin Costo)
+                </button>
               ) : (
                 <button
                   type="button"
@@ -537,7 +644,7 @@ export default function BookingModal({
                   disabled={!canNext()}
                   className="flex items-center gap-2 bg-mostaza text-marron font-bold px-7 py-3 rounded-xl uppercase tracking-widest text-xs disabled:opacity-40 hover:bg-emerald-500 hover:text-white transition shadow-glow-smoke"
                 >
-                  <CreditCard size={16} /> Confirmar & Pagar (${precioConDescuento} MXN)
+                  <CreditCard size={16} /> Pagar Silla (${precioConDescuento} MXN)
                 </button>
               )}
             </div>
