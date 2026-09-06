@@ -29,7 +29,9 @@ const barberColors = {
 
 const estadoColors = { "Completado": "#10b981", "No Asistio": "#ef4444", "Reagendado": "#f59e0b", "Agendado": "#3b82f6" };
 
-// ─── GENERADOR DE SIMULACION ───────────────────────────────────────────────────
+// ─── GENERADOR DE SIMULACION (9:00 AM A 4:00 PM CADA HORA CON 15 MIN LIMPIEZA) ─────
+const HORAS_LABORALES = [9, 10, 11, 12, 13, 14, 15]; // Citas de 1 hora: 9, 10, 11, 12, 1, 2, 3 PM
+
 function generarCitas() {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
   const inicio = subDays(hoy, 30);
@@ -39,14 +41,13 @@ function generarCitas() {
   for (let d = new Date(inicio); d <= fin; d = addDays(d, 1)) {
     const diaSemana = d.getDay();
     if (diaSemana === 0) continue; // sin domingos
-    const citasPorDia = diaSemana === 6 ? 8 : 5;
-    for (let c = 0; c < citasPorDia; c++) {
+    const slotsDelDia = HORAS_LABORALES.slice(0, diaSemana === 6 ? 7 : 5);
+    for (let c = 0; c < slotsDelDia.length; c++) {
       const barbero = BARBEROS[Math.floor(Math.random() * BARBEROS.length)];
       const servicio = SSERVICIOS[Math.floor(Math.random() * SSERVICIOS.length)];
-      const hora = 10 + Math.floor(c * 1.2);
-      const minutos = c % 2 === 0 ? 0 : 30;
-      const start = new Date(d); start.setHours(hora, minutos, 0, 0);
-      const end = new Date(start); end.setMinutes(end.getMinutes() + (servicio === "Combo" ? 55 : servicio === "Barba" ? 30 : servicio === "Express" ? 15 : 35));
+      const hora = slotsDelDia[c];
+      const start = new Date(d); start.setHours(hora, 0, 0, 0);
+      const end = new Date(start); end.setMinutes(45); // 45 min atención + 15 min limpieza
       let estado;
       const esPasada = d < hoy;
       const esFutura = d > hoy;
@@ -54,7 +55,7 @@ function generarCitas() {
       else if (esPasada) {
         const r = Math.random();
         estado = r < 0.72 ? "Completado" : r < 0.88 ? "No Asistio" : "Reagendado";
-      } else { estado = c < 2 ? "Completado" : c < 3 ? "Agendado" : "Agendado"; }
+      } else { estado = c < 3 ? "Completado" : "Agendado"; }
       citas.push({
         id: id++, title: CLIENTES[id % CLIENTES.length] + " - " + servicio,
         cliente: CLIENTES[id % CLIENTES.length], barbero, servicio, estado,
@@ -62,6 +63,35 @@ function generarCitas() {
       });
     }
   }
+
+  // Sincronización en vivo con citas de la web y modal de reserva
+  try {
+    const citasGuardadas = JSON.parse(localStorage.getItem("iron_citas_agendadas") || "[]");
+    citasGuardadas.forEach(cg => {
+      const parts = cg.fecha ? cg.fecha.split("-") : null;
+      if (parts && parts.length === 3) {
+        const horaMatch = cg.hora ? parseInt(cg.hora.split(":")[0]) : 10;
+        const isPM = cg.hora && cg.hora.includes("PM") && horaMatch !== 12;
+        const hora24 = isPM ? horaMatch + 12 : horaMatch;
+        const st = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]), hora24, 0, 0);
+        const en = new Date(st); en.setMinutes(45);
+        citas.push({
+          id: cg.id || (id++),
+          title: (cg.cliente || "Cliente") + " - " + (cg.servicio || "Corte"),
+          cliente: cg.cliente || "Cliente Web",
+          barbero: cg.barbero || BARBEROS[0],
+          servicio: cg.servicio || "Corte",
+          estado: cg.estado || "Completado",
+          start: st,
+          end: en,
+          precio: cg.precio || 250
+        });
+      }
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
   return citas;
 }
 

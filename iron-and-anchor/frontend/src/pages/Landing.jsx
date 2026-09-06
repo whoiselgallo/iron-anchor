@@ -1,290 +1,654 @@
-import React, { useState } from 'react';
-import BookingModal from '../components/BookingModal';
-import axios from 'axios';
-import { Scissors, Anchor, Calendar as CalendarIcon, User, CheckCircle2, Cloud, ShieldAlert, Phone, Mail, CreditCard, Bell, Star, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import BookingModal, { SERVICIOS, BARBEROS, SLOTS_DISPONIBLES } from '../components/BookingModal';
+import SubscriptionModal from '../components/SubscriptionModal';
 import CloudSyncModal from '../components/CloudSyncModal';
 import CheckoutForm from '../components/CheckoutForm';
 import { Link } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
+import axios from 'axios';
+import {
+  Scissors,
+  Anchor,
+  Calendar as CalendarIcon,
+  User,
+  CheckCircle2,
+  Cloud,
+  ShieldAlert,
+  Phone,
+  Mail,
+  CreditCard,
+  Bell,
+  Star,
+  Download,
+  Award,
+  Sparkles,
+  Gift,
+  Clock,
+  Check
+} from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 const stripePromise = loadStripe('pk_test_tu_llave_publica_de_stripe');
 
 function Landing() {
-  const [reserva, setReserva] = useState({ servicioId: 'signature', barbero: 'Cualquiera', fecha: '' });
+  const hoyStr = new Date().toISOString().split('T')[0];
+
+  // Modales
+  const [isCloudSyncOpen, setIsCloudSyncOpen] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showSubModal, setShowSubModal] = useState(false);
+
+  // Configuración para el modal de agendado
+  const [bookingConfig, setBookingConfig] = useState({
+    serviceId: 'signature',
+    barberoId: 'marcos',
+    fecha: hoyStr,
+    hora: '10:00 AM'
+  });
+
+  // Agendas seleccionadas por cada barbero en sus tarjetas
+  const [fechasBarberos, setFechasBarberos] = useState({});
+  const [horasBarberos, setHorasBarberos] = useState({});
+
+  // Alertas push/SMS por barbero { [barberId]: phoneString | null }
+  const [alertasBarberos, setAlertasBarberos] = useState({});
+
+  // Usuario VIP
+  const [vipUser, setVipUser] = useState(null);
+
+  // Formulario de reserva lateral (fallback)
+  const [reserva, setReserva] = useState({ servicioId: 'signature', barbero: 'Marcos Thorne', fecha: '' });
+  const [terminosAceptados, setTerminosAceptados] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [terminosAceptados, setTerminosAceptados] = useState(false);
   const [clientSecret, setClientSecret] = useState('');
 
-  // Fechas individuales para la agenda de cada barbero
-  const [fechasBarberos, setFechasBarberos] = useState({});
+  // Cargar preferencias y alertas guardadas
+  useEffect(() => {
+    // Alertas de barberos en localStorage
+    const savedAlerts = {};
+    BARBEROS.forEach((b) => {
+      const num = localStorage.getItem(`iron_barber_alert_${b.id}`);
+      if (num) savedAlerts[b.id] = num;
+    });
+    setAlertasBarberos(savedAlerts);
 
-  const barberos = ['Cualquiera', 'Marcos Thorne', 'Alejandro "Alex" Vega', 'David Castillo', 'Mateo Rivas', 'Elena Salcedo', 'Lucas Mendoza'];
-
-  const servicios = [
-    { id: 'signature', nombre: 'Corte de Cabello Signature', precio: '$250 MXN', tiempo: '35 min', desc: 'Definición de estilo adaptada a las facciones. Incluye lavado y peinado.', img: '/media/corte_cabello.jpeg' },
-    { id: 'ritual', nombre: 'Ritual de Barba Clásico', precio: '$200 MXN', tiempo: '30 min', desc: 'Perfilado detallado utilizando toallas calientes y navaja libre.', img: '/media/ritual_barba.jpeg' },
-    { id: 'combo', nombre: 'Combo Ejecutivo (Cabello + Barba)', precio: '$400 MXN', tiempo: '55 min', desc: 'El servicio integral definitivo para optimizar la agenda en una sola sesión.', img: '/media/combo_ejecutivo.jpeg' },
-    { id: 'tattoo', nombre: 'Diseño de Líneas y Hair Tattoo', precio: '$150 / $280 MXN', tiempo: '25 min', desc: 'Creación de líneas nítidas o diseños geométricos personalizados.', img: '/media/hair_tattoo.jpeg' },
-    { id: 'express', nombre: 'Servicio Express de Mantenimiento', precio: '$120 MXN', tiempo: '15 min', desc: 'Limpieza ágil de contornos, cuello y patillas para mantener tu apariencia fresca.', img: '/media/servicio_express.jpeg' },
-  ];
-
-  const maestros = [
-    {
-      id: 'marcos', selectName: 'Marcos Thorne', nombre: 'Marcos "Mano de Hierro"',
-      experiencia: '8 años de exp.', especialidad: 'Desvanecidos complejos y texturizados',
-      resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.', img: '/media/luis.jpeg',
-      rating: 4.9, vcard: 'https://vc.tsolutionsipidd.com/p/marcos-thorne-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
-    },
-    {
-      id: 'alex', selectName: 'Alejandro "Alex" Vega', nombre: 'Alex "Ancla"',
-      experiencia: '12 años de exp.', especialidad: 'Ritual Clásico y afeitado tradicional',
-      resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.', img: '/media/javier.jpeg',
-      rating: 5.0, vcard: 'https://vc.tsolutionsipidd.com/p/alex-vega-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
-    },
-    {
-      id: 'david', selectName: 'David Castillo', nombre: 'David "Line"',
-      experiencia: '5 años de exp.', especialidad: 'Diseños urbanos y Hair Tattoo',
-      resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.', img: '/media/omar.jpeg',
-      rating: 4.8, vcard: 'https://vc.tsolutionsipidd.com/p/david-castillo-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
-    },
-    {
-      id: 'mateo', selectName: 'Mateo Rivas', nombre: 'Mateo "Express"',
-      experiencia: '7 años de exp.', especialidad: 'Limpieza de contornos y ejecutivos',
-      resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.', img: '/media/mateo.jpeg',
-      rating: 4.7, vcard: 'https://vc.tsolutionsipidd.com/p/mateo-rivas-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
-    },
-    {
-      id: 'elena', selectName: 'Elena Salcedo', nombre: 'Elena "Experiencia"',
-      experiencia: '10 años de exp.', especialidad: 'Cortes clásicos y asesoría de imagen',
-      resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.', img: '/media/nicole.jpeg',
-      rating: 4.9, vcard: 'https://vc.tsolutionsipidd.com/p/elena-salcedo-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
-    },
-    {
-      id: 'lucas', selectName: 'Lucas Mendoza', nombre: 'Lucas "Precisión"',
-      experiencia: '6 años de exp.', especialidad: 'Combo Ejecutivo (Cabello + Barba)',
-      resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.', img: '/media/alan.jpeg',
-      rating: 4.8, vcard: 'https://vc.tsolutionsipidd.com/p/lucas-mendoza-iron-anchor',
-      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    // Usuario VIP
+    const rawVip = localStorage.getItem('iron_vip_user');
+    if (rawVip) {
+      try {
+        setVipUser(JSON.parse(rawVip));
+      } catch (e) {
+        console.error(e);
+      }
     }
-  ];
+  }, []);
 
-  const handleBooking = async () => {
+  // Activar / Desactivar alerta SMS del barbero
+  const handleToggleAlerta = (barbero) => {
+    const actual = alertasBarberos[barbero.id];
+    if (actual) {
+      if (window.confirm(`¿Deseas desactivar las alertas automáticas SMS para ${barbero.nombre}?`)) {
+        localStorage.removeItem(`iron_barber_alert_${barbero.id}`);
+        setAlertasBarberos((prev) => {
+          const copia = { ...prev };
+          delete copia[barbero.id];
+          return copia;
+        });
+      }
+    } else {
+      const num = window.prompt(
+        `Ingresa el número celular de ${barbero.nombre} para enviarle alertas SMS cuando un cliente confirme cita, pague o reagende:`,
+        barbero.telefono || '+52 686 '
+      );
+      if (num && num.trim().length >= 8) {
+        localStorage.setItem(`iron_barber_alert_${barbero.id}`, num.trim());
+        setAlertasBarberos((prev) => ({ ...prev, [barbero.id]: num.trim() }));
+        alert(`✅ Alertas SMS activadas para ${barbero.nombre}. Se le enviará mensaje a ${num.trim()} en cada confirmación.`);
+      }
+    }
+  };
+
+  // Abrir modal con servicio específico
+  const handleAbrirServicio = (servicioId) => {
+    setBookingConfig((prev) => ({ ...prev, serviceId }));
+    setShowBookingModal(true);
+  };
+
+  // Abrir modal desde tarjeta de barbero
+  const handleAbrirBarbero = (barberoId) => {
+    const fecha = fechasBarberos[barberoId] || hoyStr;
+    const hora = horasBarberos[barberoId] || '10:00 AM';
+    setBookingConfig((prev) => ({
+      ...prev,
+      barberoId,
+      fecha,
+      hora
+    }));
+    setShowBookingModal(true);
+  };
+
+  const handleBookingGeneral = async () => {
     if (!reserva.fecha) {
-      setMessage('Por favor, selecciona una fecha y hora.'); return;
+      setMessage('Por favor, selecciona una fecha y hora.');
+      return;
     }
-    setLoading(true); setMessage('');
+    setLoading(true);
+    setMessage('');
     try {
       const response = await axios.post(`${API_URL}/api/pay/stripe`, reserva);
       setClientSecret(response.data.clientSecret);
       setMessage('✅ Reserva procesada. Finaliza tu pago a continuación.');
     } catch (error) {
       setMessage(error.response?.data?.error || 'Error al procesar la reserva. Intenta de nuevo.');
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const solicitarNotificacion = (barbero) => {
-    alert(`Notificaciones Push activadas para turnos de ${barbero}. (Requiere integración Service Worker en Backend)`);
-  };
+  const maestros = [
+    {
+      id: 'marcos',
+      selectName: 'Marcos Thorne',
+      nombre: 'Marcos "Mano de Hierro"',
+      experiencia: '8 años de exp.',
+      especialidad: 'Desvanecidos complejos y texturizados',
+      resena: 'Reconocido por su pulcritud matemática. Ejecuta degradados perfectos en tiempo récord, asegurando un estilo nítido por semanas.',
+      img: '/media/luis.jpeg',
+      rating: 4.9,
+      vcard: 'https://vc.tsolutionsipidd.com/p/marcos-thorne-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    },
+    {
+      id: 'alex',
+      selectName: 'Alejandro "Alex" Vega',
+      nombre: 'Alex "Ancla"',
+      experiencia: '12 años de exp.',
+      especialidad: 'Ritual Clásico y afeitado tradicional',
+      resena: 'Maestro de la vieja escuela. Convierte el cuidado de la barba en una experiencia premium. Precisión aclamada por los empresarios.',
+      img: '/media/javier.jpeg',
+      rating: 5.0,
+      vcard: 'https://vc.tsolutionsipidd.com/p/alex-vega-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    },
+    {
+      id: 'david',
+      selectName: 'David Castillo',
+      nombre: 'David "Line"',
+      experiencia: '5 años de exp.',
+      especialidad: 'Diseños urbanos y Hair Tattoo',
+      resena: 'Destreza artística excepcional para trazar líneas ultra nítidas. Cada corte es una obra de arte simétrica.',
+      img: '/media/omar.jpeg',
+      rating: 4.8,
+      vcard: 'https://vc.tsolutionsipidd.com/p/david-castillo-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    },
+    {
+      id: 'mateo',
+      selectName: 'Mateo Rivas',
+      nombre: 'Mateo "Express"',
+      experiencia: '7 años de exp.',
+      especialidad: 'Limpieza de contornos y ejecutivos',
+      resena: 'Preferido por clientes con agendas saturadas por su agilidad. Limpieza de pulcritud absoluta en 15 minutos.',
+      img: '/media/mateo.jpeg',
+      rating: 4.7,
+      vcard: 'https://vc.tsolutionsipidd.com/p/mateo-rivas-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    },
+    {
+      id: 'elena',
+      selectName: 'Elena Salcedo',
+      nombre: 'Elena "Experiencia"',
+      experiencia: '10 años de exp.',
+      especialidad: 'Cortes clásicos y asesoría de imagen',
+      resena: 'Destaca por su detallado diagnóstico de visagismo, adaptando las tendencias a tus facciones con técnica impecable.',
+      img: '/media/nicole.jpeg',
+      rating: 4.9,
+      vcard: 'https://vc.tsolutionsipidd.com/p/elena-salcedo-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    },
+    {
+      id: 'lucas',
+      selectName: 'Lucas Mendoza',
+      nombre: 'Lucas "Precisión"',
+      experiencia: '6 años de exp.',
+      especialidad: 'Combo Ejecutivo (Cabello + Barba)',
+      resena: 'Experto en servicio integral. Coordina de forma fluida el lavado, corte y perfilado en 55 minutos.',
+      img: '/media/alan.jpeg',
+      rating: 4.8,
+      vcard: 'https://vc.tsolutionsipidd.com/p/lucas-mendoza-iron-anchor',
+      googleReview: 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'
+    }
+  ];
 
   return (
     <div className="bg-marron min-h-screen text-perla font-sans scroll-smooth">
-      <CloudSyncModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      
+      {/* MODAL TRASLÚCIDO DE RESERVA Y PAGO */}
+      <BookingModal
+        isOpen={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
+        initialServiceId={bookingConfig.serviceId}
+        initialBarberoId={bookingConfig.barberoId}
+        initialFecha={bookingConfig.fecha}
+        initialHora={bookingConfig.hora}
+        onBookingSuccess={() => {
+          const raw = localStorage.getItem('iron_vip_user');
+          if (raw) setVipUser(JSON.parse(raw));
+        }}
+      />
+
+      {/* MODAL DE SUSCRIPCIÓN CLUB VIP */}
+      <SubscriptionModal
+        isOpen={showSubModal}
+        onClose={() => setShowSubModal(false)}
+        onSubscribed={(user) => {
+          setVipUser(user);
+        }}
+      />
+
+      {/* MODAL CLOUD SYNC */}
+      <CloudSyncModal isOpen={isCloudSyncOpen} onClose={() => setIsCloudSyncOpen(false)} />
+
       {/* NAVBAR */}
-      <nav className="border-b-4 border-mostaza bg-marron py-4 px-8 flex justify-between items-center sticky top-0 z-40 shadow-2xl">
-        <div className="flex items-center gap-3 text-perla font-serif text-2xl tracking-widest uppercase">
+      <nav className="border-b-4 border-mostaza bg-marron py-4 px-4 md:px-8 flex justify-between items-center sticky top-0 z-40 shadow-2xl">
+        <div className="flex items-center gap-3 text-perla font-serif text-xl md:text-2xl tracking-widest uppercase">
           <Anchor size={28} className="text-mostaza" />
           <span>IRON & ANCHOR</span>
         </div>
-        <div className="flex items-center gap-6">
-          <Link to="/dashboard" className="text-mostaza hover:text-perla font-bold tracking-widest uppercase transition text-sm">Dashboard</Link>
-          <button onClick={() => setIsModalOpen(true)} className="flex items-center gap-2 text-perla/80 hover:text-mostaza font-bold transition text-sm">
-            <Cloud size={18} /> Cloud Sync
+        <div className="flex items-center gap-3 md:gap-6">
+          <button
+            onClick={() => setShowSubModal(true)}
+            className="hidden sm:flex items-center gap-1.5 bg-gradient-to-r from-mostaza/20 to-mostaza/40 border border-mostaza text-mostaza hover:bg-mostaza hover:text-marron px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition shadow-[0_0_10px_rgba(225,173,1,0.3)]"
+          >
+            <Sparkles size={14} /> Club VIP (-20%)
           </button>
-          <a href="#reservar" className="bg-perla text-marron px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-mostaza hover:text-marron transition shadow-[0_0_15px_rgba(248,246,240,0.5)]">
+          <Link to="/dashboard" className="text-mostaza hover:text-perla font-bold tracking-widest uppercase transition text-xs md:text-sm">
+            Dashboard
+          </Link>
+          <button onClick={() => setIsCloudSyncOpen(true)} className="flex items-center gap-1.5 text-perla/80 hover:text-mostaza font-bold transition text-xs md:text-sm">
+            <Cloud size={16} /> <span className="hidden md:inline">Cloud Sync</span>
+          </button>
+          <button
+            onClick={() => setShowBookingModal(true)}
+            className="bg-perla text-marron px-4 md:px-6 py-2 rounded-sm font-bold uppercase tracking-widest hover:bg-mostaza hover:text-marron transition text-xs md:text-sm shadow-[0_0_15px_rgba(248,246,240,0.5)]"
+          >
             Agendar
-          </a>
+          </button>
         </div>
       </nav>
 
+      {/* BANNER VIP STICKY (SI ESTÁ SUSCRITO) */}
+      {vipUser && (
+        <div className="bg-gradient-to-r from-amber-950 via-marron to-amber-950 border-b border-mostaza/40 py-2 px-4 text-center text-xs text-mostaza flex items-center justify-center gap-2">
+          <Award size={16} className="text-mostaza" />
+          <span>
+            ¡Bienvenido miembro VIP <strong>{vipUser.nombre}</strong>! Tienes <strong>20% OFF</strong> en tu reserva | Pasaporte: <strong>{vipUser.visitas || 1} de 7 visitas</strong> (7ma gratis)
+          </span>
+        </div>
+      )}
+
       {/* HERO SECTION */}
-      <header className="relative bg-marron py-32 text-center border-b-8 border-mostaza flex flex-col items-center overflow-hidden">
+      <header className="relative bg-marron py-28 md:py-36 text-center border-b-8 border-mostaza flex flex-col items-center overflow-hidden">
         <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover opacity-60">
           <source src="/media/barber3.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-marron/60 to-marron/95"></div>
 
-        <div className="relative z-10">
-          <h1 className="text-6xl md:text-8xl font-serif text-perla mb-4 tracking-[0.1em] uppercase drop-shadow-2xl">
+        <div className="relative z-10 max-w-4xl px-4">
+          <span className="inline-flex items-center gap-2 bg-mostaza/20 border border-mostaza/50 text-mostaza px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6">
+            <Clock size={14} /> Horario Oficial: 9:00 AM a 4:00 PM • Citas Cada Hora
+          </span>
+          <h1 className="text-5xl md:text-8xl font-serif text-perla mb-4 tracking-[0.1em] uppercase drop-shadow-2xl">
             Iron & Anchor
           </h1>
-          <p className="text-2xl md:text-3xl text-mostaza font-bold tracking-widest uppercase mb-10">
+          <p className="text-xl md:text-3xl text-mostaza font-bold tracking-widest uppercase mb-8">
             Estilo • Precisión • Rapidez
           </p>
-          <p className="text-lg max-w-3xl mx-auto text-perla/90 mb-12 px-4 font-medium leading-relaxed drop-shadow-md">
-            El Refugio del Hombre Moderno en Mexicali. Más que un corte de cabello, es un ritual. Relájate en una de nuestras sillas maestras mientras nuestros expertos forjan tu estilo.
+          <p className="text-base md:text-lg max-w-2xl mx-auto text-perla/90 mb-10 font-medium leading-relaxed drop-shadow-md">
+            El Refugio del Hombre Moderno en Mexicali. Citas estrictamente organizadas cada hora con 15 minutos dedicados a la sanitización y preparación de la silla.
           </p>
-          <a href="#reservar" className="inline-flex items-center gap-3 bg-perla text-marron font-bold py-5 px-12 rounded-sm text-xl hover:bg-mostaza transition uppercase tracking-[0.2em] shadow-[0_0_30px_rgba(248,246,240,0.4)]">
-            <Scissors size={24} /> Agendar Cita
-          </a>
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              onClick={() => setShowBookingModal(true)}
+              className="inline-flex items-center gap-3 bg-perla text-marron font-bold py-4 px-10 rounded-sm text-lg hover:bg-mostaza transition uppercase tracking-[0.15em] shadow-[0_0_30px_rgba(248,246,240,0.4)]"
+            >
+              <Scissors size={20} /> Agendar Cita
+            </button>
+            <button
+              onClick={() => setShowSubModal(true)}
+              className="inline-flex items-center gap-2 bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-4 px-8 rounded-sm text-lg transition uppercase tracking-[0.15em]"
+            >
+              <Gift size={20} /> Club VIP (20% OFF)
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* SECCIÓN EQUIPO: TARJETAS MAGNÉTICAS */}
-      <section id="equipo" className="py-24 bg-marron px-4 relative overflow-hidden border-b-8 border-mostaza">
-        <div className="absolute inset-0 opacity-5 bg-[url('/media/foto0.jpeg')] bg-cover bg-center mix-blend-overlay"></div>
-
+      {/* SECCIÓN NUESTRO EQUIPO */}
+      <section id="equipo" className="py-24 bg-[#2A1A0F] px-4 relative overflow-hidden border-b-8 border-mostaza">
         <div className="text-center mb-16 relative z-10">
-          <h2 className="text-4xl md:text-5xl font-serif text-perla mb-4 tracking-widest uppercase">Conoce a Nuestro Equipo</h2>
+          <h2 className="text-4xl md:text-5xl font-serif text-perla mb-4 tracking-widest uppercase">Nuestros Maestros</h2>
           <div className="h-1 w-24 bg-mostaza mx-auto mb-6"></div>
-          <p className="text-perla/70 font-medium max-w-2xl mx-auto">Selecciona tu barbero, visualiza su disponibilidad y concreta el pago de tu silla.</p>
+          <p className="text-perla/70 font-medium max-w-xl mx-auto">
+            Disponibilidad en tiempo real dentro del horario laboral de 9:00 AM a 4:00 PM. Cada cita incluye 15 minutos de desinfección previa.
+          </p>
         </div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative z-10">
-          {maestros.map((m) => (
-            <div key={m.id} className="group relative">
-              {/* Contenedor Magnético */}
-              <div className="bg-[#3A2214] p-6 rounded-xl shadow-glow-smoke flex flex-col border border-marron group-hover:border-mostaza transform transition-all duration-500 hover:-translate-y-3 hover:shadow-glow-smoke h-full">
-                
-                <h3 className="text-2xl font-serif text-mostaza tracking-widest uppercase mb-4 text-center leading-tight">{m.nombre}</h3>
-                
-                <div className="relative mb-6 mx-auto w-40 h-40 rounded-full">
-                  <div className="absolute inset-0 bg-mostaza rounded-full blur-xl opacity-0 group-hover:opacity-60 transition duration-500 transform scale-110"></div>
-                  <img src={m.img} alt={m.nombre} loading="lazy" className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron" />
-                </div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative z-10">
+          {maestros.map((m) => {
+            const fechaActual = fechasBarberos[m.id] || hoyStr;
+            const horaActual = horasBarberos[m.id] || '10:00 AM';
+            const alertaActiva = alertasBarberos[m.id];
 
-                {/* BARRA DE RESEÑA */}
-                <div className="flex flex-col items-center mb-4">
-                  <div className="flex justify-center items-center gap-1 text-mostaza mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={16} fill={i < Math.floor(m.rating) ? "currentColor" : "transparent"} strokeWidth={2} />
-                    ))}
-                    <span className="text-perla font-bold ml-2 text-sm">{m.rating.toFixed(1)}/5.0</span>
-                  </div>
-                  <a href={m.googleReview || "https://maps.app.goo.gl/MDd4DLhyLm2aRjh76"} target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase font-bold tracking-wider text-mostaza hover:text-marron hover:bg-mostaza border border-mostaza px-3 py-1 rounded-full transition">
-                    Calificar en Google
-                  </a>
-                </div>
-                
-                <div className="flex-1 text-center flex flex-col">
-                  <p className="text-perla font-bold text-sm mb-1 uppercase tracking-wider">{m.experiencia}</p>
-                  <p className="text-mostaza font-bold text-sm mb-4 px-2 leading-tight border-b border-mostaza/30 pb-4">{m.especialidad}</p>
-                  <p className="text-perla/80 text-sm mb-6 leading-relaxed italic">"{m.resena}"</p>
-                </div>
-
-                {/* Agenda y Pagos Integrados */}
-                <div className="bg-marron rounded-lg p-4 mt-auto border border-marron">
-                  <h4 className="text-sm font-bold text-mostaza uppercase mb-3 flex justify-center items-center gap-2"><CalendarIcon size={16}/> Disponibilidad</h4>
+            return (
+              <div key={m.id} className="group relative">
+                <div className="bg-[#3A2214] p-6 rounded-2xl shadow-glow-smoke flex flex-col border border-marron group-hover:border-mostaza/80 transform transition-all duration-300 hover:-translate-y-2 h-full">
                   
-                  <input 
-                    type="datetime-local" 
-                    className="w-full p-3 bg-[#2A1A0F] border border-mostaza/30 text-perla rounded mb-3 text-sm focus:border-mostaza outline-none"
-                    onChange={(e) => setFechasBarberos({...fechasBarberos, [m.id]: e.target.value})}
-                  />
+                  <h3 className="text-2xl font-serif text-mostaza tracking-widest uppercase mb-4 text-center leading-tight">
+                    {m.nombre}
+                  </h3>
 
-                  <div className="flex flex-col gap-2">
-                    <button onClick={() => solicitarNotificacion(m.selectName)} className="w-full border border-perla/30 text-perla/80 hover:bg-perla/10 font-bold py-2 rounded text-xs uppercase transition flex justify-center items-center gap-2">
-                      <Bell size={14} /> Alertas Push
-                    </button>
-                    <button onClick={() => alert(`Conectando pasarela dividida para pago a silla de ${m.selectName}...`)} className="w-full bg-perla text-marron hover:bg-mostaza hover:text-marron font-bold py-3 rounded text-sm uppercase tracking-wider transition shadow-[0_0_10px_rgba(248,246,240,0.3)] flex justify-center items-center gap-2 mt-2">
-                      <CreditCard size={16} /> Pagar Silla
-                    </button>
-                    <a href={m.vcard} target="_blank" rel="noopener noreferrer" className="w-full mt-2 bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-2 rounded text-xs uppercase tracking-wider transition flex justify-center items-center gap-2">
-                      <Download size={14} /> ROSE vCard
+                  <div className="relative mb-5 mx-auto w-36 h-36 rounded-full">
+                    <div className="absolute inset-0 bg-mostaza rounded-full blur-lg opacity-0 group-hover:opacity-50 transition duration-500"></div>
+                    <img
+                      src={m.img}
+                      alt={m.nombre}
+                      loading="lazy"
+                      className="relative w-full h-full object-cover rounded-full border-4 border-mostaza shadow-xl z-10 bg-marron"
+                    />
+                  </div>
+
+                  {/* BARRA DE RESEÑAS */}
+                  <div className="flex flex-col items-center mb-4">
+                    <div className="flex justify-center items-center gap-1 text-mostaza mb-1.5">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={15} fill={i < Math.floor(m.rating) ? 'currentColor' : 'transparent'} strokeWidth={2} />
+                      ))}
+                      <span className="text-perla font-bold ml-1.5 text-xs">{m.rating.toFixed(1)} / 5.0</span>
+                    </div>
+                    <a
+                      href={m.googleReview || 'https://maps.app.goo.gl/MDd4DLhyLm2aRjh76'}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[10px] uppercase font-bold tracking-wider text-mostaza hover:text-marron hover:bg-mostaza border border-mostaza px-3 py-1 rounded-full transition"
+                    >
+                      Calificar en Google
                     </a>
+                  </div>
+
+                  <div className="text-center flex flex-col mb-4">
+                    <p className="text-perla font-bold text-xs mb-1 uppercase tracking-wider">{m.experiencia}</p>
+                    <p className="text-mostaza font-bold text-xs mb-3 px-2 leading-tight border-b border-mostaza/20 pb-3">{m.especialidad}</p>
+                    <p className="text-perla/80 text-xs leading-relaxed italic line-clamp-2">"{m.resena}"</p>
+                  </div>
+
+                  {/* AGENDA PERSONAL DEL BARBERO: 9 AM a 4 PM con 15 min de limpieza */}
+                  <div className="bg-marron rounded-xl p-4 mt-auto border border-mostaza/30 space-y-3">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xs font-bold text-mostaza uppercase flex items-center gap-1.5">
+                        <CalendarIcon size={14} /> Horarios Disponibles
+                      </h4>
+                      <span className="text-[10px] text-perla/60">9:00 AM - 4:00 PM</span>
+                    </div>
+
+                    {/* Selector de fecha limpio */}
+                    <div>
+                      <label className="text-[10px] font-bold text-perla/60 uppercase block mb-1">Día de atención:</label>
+                      <input
+                        type="date"
+                        value={fechaActual}
+                        min={hoyStr}
+                        onChange={(e) => setFechasBarberos({ ...fechasBarberos, [m.id]: e.target.value })}
+                        className="w-full p-2 bg-[#2A1A0F] border border-mostaza/30 text-perla rounded text-xs font-bold focus:border-mostaza outline-none"
+                      />
+                    </div>
+
+                    {/* Horas disponibles directamente en botones (no carrusel de ruedas) */}
+                    <div>
+                      <label className="text-[10px] font-bold text-perla/60 uppercase block mb-1.5">
+                        Selecciona tu hora (45 min + 15 min limpieza):
+                      </label>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {SLOTS_DISPONIBLES.map((slot) => {
+                          const isSel = horaActual === slot.hora;
+                          return (
+                            <button
+                              key={slot.hora}
+                              type="button"
+                              onClick={() => setHorasBarberos({ ...horasBarberos, [m.id]: slot.hora })}
+                              className={`py-1.5 px-1 rounded text-[11px] font-mono font-bold transition text-center ${
+                                isSel
+                                  ? 'bg-mostaza text-marron border border-mostaza shadow-[0_0_8px_rgba(225,173,1,0.5)]'
+                                  : 'bg-[#2A1A0F] border border-perla/15 text-perla hover:border-mostaza/60'
+                              }`}
+                            >
+                              {slot.hora.replace(' ', '')}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Botones de acción: Alerta Push/SMS, Pagar Silla, vCard */}
+                    <div className="space-y-2 pt-1">
+                      {/* Botón Alertas Push/SMS para el Barbero */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleAlerta(m)}
+                        className={`w-full py-2 px-3 rounded text-xs font-bold uppercase tracking-wider transition flex justify-center items-center gap-1.5 border ${
+                          alertaActiva
+                            ? 'bg-emerald-950/80 border-emerald-500 text-emerald-300 hover:bg-emerald-900'
+                            : 'border-perla/30 text-perla/80 hover:border-mostaza hover:text-mostaza'
+                        }`}
+                      >
+                        <Bell size={13} className={alertaActiva ? 'text-emerald-400' : ''} />
+                        {alertaActiva ? `Alertas SMS Activas (${alertaActiva})` : 'Activar Alertas SMS'}
+                      </button>
+
+                      {/* Botón Pagar / Reservar Silla */}
+                      <button
+                        type="button"
+                        onClick={() => handleAbrirBarbero(m.id)}
+                        className="w-full bg-perla text-marron hover:bg-mostaza font-bold py-2.5 rounded text-xs uppercase tracking-wider transition shadow-[0_0_10px_rgba(248,246,240,0.3)] flex justify-center items-center gap-2"
+                      >
+                        <CreditCard size={15} /> Pagar Silla ({horaActual})
+                      </button>
+
+                      {/* Botón Información de contacto (vCard) */}
+                      <a
+                        href={m.vcard}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full bg-transparent border-2 border-mostaza text-mostaza hover:bg-mostaza hover:text-marron font-bold py-2 rounded text-xs uppercase tracking-wider transition flex justify-center items-center gap-2"
+                      >
+                        <Download size={13} /> Información de contacto
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* MENÚ GENERAL */}
+      {/* MENÚ DE ESPECIALIDADES Y RESERVA TRASLÚCIDA */}
       <section id="reservar" className="py-24 bg-[#3A2214] px-4 relative overflow-hidden">
         <div className="text-center mb-16 relative z-10">
+          <span className="text-xs uppercase font-bold tracking-widest text-mostaza bg-mostaza/10 px-4 py-1.5 rounded-full border border-mostaza/30 mb-3 inline-block">
+            Haz clic en cualquier servicio para agendar en modal
+          </span>
           <h2 className="text-4xl md:text-5xl font-serif text-perla mb-4 tracking-widest uppercase">Menú de Especialidades</h2>
           <div className="h-1 w-24 bg-mostaza mx-auto mb-6"></div>
-          <p className="text-perla/70 font-medium">Selecciona tu servicio y optimiza tu tiempo en la silla.</p>
+          <p className="text-perla/70 font-medium">Selecciona tu paquete para abrir el proceso de agendado y pago traslúcido.</p>
         </div>
 
         <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-8 relative z-10">
           <div className="lg:col-span-7 flex flex-col gap-6">
-            {servicios.map((s, idx) => (
-              <div key={s.id} onClick={() => setReserva({...reserva, servicioId: s.id})} className={`flex flex-col md:flex-row overflow-hidden rounded-lg cursor-pointer transition-all shadow-glow-smoke bg-marron border-2 ${reserva.servicioId === s.id ? 'border-mostaza scale-[1.02]' : 'border-transparent hover:border-mostaza/50'}`}>
+            {SERVICIOS.map((s, idx) => (
+              <div
+                key={s.id}
+                onClick={() => handleAbrirServicio(s.id)}
+                className="flex flex-col md:flex-row overflow-hidden rounded-xl cursor-pointer transition-all shadow-glow-smoke bg-marron border-2 border-mostaza/30 hover:border-mostaza hover:scale-[1.02] group"
+              >
                 {idx % 2 === 0 ? (
-                  <><div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} className="w-full h-full object-cover" /></div>
-                    <div className="p-6 md:w-3/5 flex flex-col justify-center">
-                      <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-mostaza' : 'text-perla'}`}>{s.nombre}</h3>
-                      <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold"><span className="text-perla">{s.precio}</span><span className="text-mostaza">| {s.tiempo}</span></div>
-                      <p className="text-perla/70 text-sm leading-relaxed">{s.desc}</p>
-                    </div></>
-                ) : (
-                  <><div className="p-6 md:w-3/5 flex flex-col justify-center">
-                      <h3 className={`text-xl font-serif tracking-wide uppercase ${reserva.servicioId === s.id ? 'text-mostaza' : 'text-perla'}`}>{s.nombre}</h3>
-                      <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold"><span className="text-perla">{s.precio}</span><span className="text-mostaza">| {s.tiempo}</span></div>
-                      <p className="text-perla/70 text-sm leading-relaxed">{s.desc}</p>
+                  <>
+                    <div className="md:w-2/5 h-48 md:h-auto overflow-hidden">
+                      <img src={s.img} alt={s.nombre} className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
                     </div>
-                    <div className="md:w-2/5 h-48 md:h-auto"><img src={s.img} alt={s.nombre} loading="lazy" className="w-full h-full object-cover" /></div></>
+                    <div className="p-6 md:w-3/5 flex flex-col justify-center">
+                      <h3 className="text-xl font-serif tracking-wide uppercase text-perla group-hover:text-mostaza transition">{s.nombre}</h3>
+                      <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold">
+                        <span className="text-perla font-mono">${s.precio} MXN</span>
+                        <span className="text-mostaza">| {s.tiempo}</span>
+                      </div>
+                      <p className="text-perla/70 text-xs leading-relaxed mb-4">{s.desc}</p>
+                      <button className="self-start text-xs font-bold text-mostaza flex items-center gap-1 group-hover:underline uppercase tracking-wider">
+                        Agendar y Pagar este Servicio &rarr;
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="p-6 md:w-3/5 flex flex-col justify-center order-2 md:order-1">
+                      <h3 className="text-xl font-serif tracking-wide uppercase text-perla group-hover:text-mostaza transition">{s.nombre}</h3>
+                      <div className="flex items-center gap-3 mt-2 mb-3 text-sm font-bold">
+                        <span className="text-perla font-mono">${s.precio} MXN</span>
+                        <span className="text-mostaza">| {s.tiempo}</span>
+                      </div>
+                      <p className="text-perla/70 text-xs leading-relaxed mb-4">{s.desc}</p>
+                      <button className="self-start text-xs font-bold text-mostaza flex items-center gap-1 group-hover:underline uppercase tracking-wider">
+                        Agendar y Pagar este Servicio &rarr;
+                      </button>
+                    </div>
+                    <div className="md:w-2/5 h-48 md:h-auto overflow-hidden order-1 md:order-2">
+                      <img src={s.img} alt={s.nombre} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                    </div>
+                  </>
                 )}
               </div>
             ))}
           </div>
 
           <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="bg-marron p-8 rounded-lg border-t-8 border-mostaza shadow-glow-smoke relative text-perla">
-              <h3 className="text-2xl font-serif mb-6 text-mostaza tracking-widest uppercase">Reserva General</h3>
-              <div className="space-y-5 relative z-10">
+            {/* Banner del Club de Suscripción */}
+            <div className="bg-gradient-to-b from-[#2A1A0F] to-marron p-6 rounded-xl border-2 border-mostaza shadow-glow-smoke text-perla space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-mostaza/20 border border-mostaza rounded-xl text-mostaza">
+                  <Award size={28} />
+                </div>
                 <div>
-                  <label className="flex items-center gap-2 mb-2 text-perla/80 font-bold text-sm uppercase tracking-wide"><User size={16}/> Asignar Barbero</label>
-                  <select value={reserva.barbero} onChange={(e) => setReserva({...reserva, barbero: e.target.value})} className="w-full p-4 bg-[#2A1A0F] border-2 border-mostaza/50 text-perla outline-none focus:border-mostaza transition appearance-none font-bold">
-                    {barberos.map(b => <option key={b} value={b}>{b}</option>)}
+                  <h4 className="text-lg font-serif uppercase tracking-widest text-perla">Club VIP Iron & Anchor</h4>
+                  <p className="text-xs text-mostaza font-bold">20% Descuento & 7ma Visita Gratis</p>
+                </div>
+              </div>
+              <p className="text-xs text-perla/80 leading-relaxed">
+                Únete a nuestro programa de fidelidad. Haz check-in en cada confirmación de pago y acumula visitas automáticamente.
+              </p>
+              <button
+                onClick={() => setShowSubModal(true)}
+                className="w-full bg-mostaza text-marron font-serif text-sm uppercase tracking-widest font-bold py-3 rounded-lg hover:bg-perla transition shadow"
+              >
+                {vipUser ? 'Ver Mi Pasaporte VIP' : 'Suscribirme y Recibir 20% OFF'}
+              </button>
+            </div>
+
+            {/* Formulario lateral de reserva */}
+            <div className="bg-marron p-7 rounded-xl border border-mostaza/30 shadow-glow-smoke text-perla space-y-4">
+              <h3 className="text-xl font-serif text-mostaza tracking-widest uppercase">Reserva Rápida de Silla</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="flex items-center gap-2 mb-1.5 text-perla/80 font-bold text-xs uppercase tracking-wide">
+                    <User size={14} /> Barbero Asignado
+                  </label>
+                  <select
+                    value={reserva.barbero}
+                    onChange={(e) => setReserva({ ...reserva, barbero: e.target.value })}
+                    className="w-full p-3 bg-[#2A1A0F] border border-mostaza/40 text-perla text-xs rounded outline-none focus:border-mostaza font-bold"
+                  >
+                    {BARBEROS.map((b) => (
+                      <option key={b.id} value={b.nombre}>
+                        {b.nombre} ({b.alias})
+                      </option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label className="flex items-center gap-2 mb-2 text-perla/80 font-bold text-sm uppercase tracking-wide"><CalendarIcon size={16}/> Ventana de Tiempo</label>
-                  <input type="datetime-local" value={reserva.fecha} onChange={(e) => setReserva({...reserva, fecha: e.target.value})} className="w-full p-4 bg-[#2A1A0F] border-2 border-mostaza/50 text-perla outline-none focus:border-mostaza transition font-bold" />
+                  <label className="flex items-center gap-2 mb-1.5 text-perla/80 font-bold text-xs uppercase tracking-wide">
+                    <CalendarIcon size={14} /> Horario (9:00 AM - 4:00 PM)
+                  </label>
+                  <input
+                    type="date"
+                    value={reserva.fecha}
+                    min={hoyStr}
+                    onChange={(e) => setReserva({ ...reserva, fecha: e.target.value })}
+                    className="w-full p-3 bg-[#2A1A0F] border border-mostaza/40 text-perla text-xs rounded outline-none focus:border-mostaza font-bold mb-2"
+                  />
+                  <div className="grid grid-cols-4 gap-1">
+                    {SLOTS_DISPONIBLES.map((slot) => (
+                      <button
+                        key={slot.hora}
+                        type="button"
+                        onClick={() => setReserva({ ...reserva, hora: slot.hora })}
+                        className={`py-1 rounded text-[10px] font-mono font-bold ${
+                          reserva.hora === slot.hora ? 'bg-mostaza text-marron' : 'bg-[#2A1A0F] text-perla/80 hover:text-mostaza border border-perla/10'
+                        }`}
+                      >
+                        {slot.hora.replace(' ', '')}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <div className="mt-6 p-4 bg-[#2A1A0F] border border-mostaza/30 flex gap-3 rounded">
-                  <input type="checkbox" id="terms" checked={terminosAceptados} onChange={(e) => setTerminosAceptados(e.target.checked)} className="mt-1 w-5 h-5 accent-mostaza cursor-pointer flex-shrink-0" />
-                  <label htmlFor="terms" className="text-sm text-perla/90 cursor-pointer leading-tight font-medium">He leído y acepto obligatoriamente las políticas de puntualidad y cancelación estipuladas.</label>
+
+                <div className="p-3 bg-[#2A1A0F] border border-mostaza/20 flex gap-2.5 rounded">
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    checked={terminosAceptados}
+                    onChange={(e) => setTerminosAceptados(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 accent-mostaza cursor-pointer flex-shrink-0"
+                  />
+                  <label htmlFor="terms" className="text-[11px] text-perla/80 cursor-pointer leading-tight">
+                    Acepto políticas de puntualidad (máx. 10 min tolerancia) y 15 min de limpieza obligatoria.
+                  </label>
                 </div>
-                {message && (<div className={`p-4 font-bold text-sm rounded ${message.includes('Error') || message.includes('Por favor') ? 'bg-red-900/80 text-red-100 border-l-4 border-red-500' : 'bg-green-900/80 text-green-100 border-l-4 border-green-500'}`}>{message}</div>)}
-                <div className="pt-2">
+
+                {message && (
+                  <div className={`p-3 font-bold text-xs rounded ${message.includes('Error') || message.includes('Por favor') ? 'bg-red-900/80 text-red-100' : 'bg-green-900/80 text-green-100'}`}>
+                    {message}
+                  </div>
+                )}
+
+                <div>
                   {clientSecret ? (
-                    <div className="mt-4">
-                      <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#E1AD01', colorBackground: '#3A2214', colorText: '#F8F6F0' } } }}>
-                        <CheckoutForm clientSecret={clientSecret} onCancel={() => setClientSecret('')} />
-                      </Elements>
-                    </div>
+                    <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night', variables: { colorPrimary: '#E1AD01', colorBackground: '#3A2214', colorText: '#F8F6F0' } } }}>
+                      <CheckoutForm clientSecret={clientSecret} onCancel={() => setClientSecret('')} />
+                    </Elements>
                   ) : (
-                    <button onClick={handleBooking} disabled={loading || !terminosAceptados} className="w-full bg-perla disabled:bg-gray-600 disabled:text-gray-400 text-marron hover:bg-mostaza py-4 font-serif text-xl tracking-widest uppercase transition flex justify-center items-center gap-2 rounded shadow-[0_0_15px_rgba(248,246,240,0.3)]">
-                      <CheckCircle2 size={24} /> {loading ? 'Cargando Pasarela...' : 'Asegurar Silla'}
+                    <button
+                      onClick={() => setShowBookingModal(true)}
+                      className="w-full bg-mostaza text-marron hover:bg-perla py-3.5 font-serif text-base tracking-widest uppercase transition flex justify-center items-center gap-2 rounded-lg font-bold shadow-glow-smoke"
+                    >
+                      <CheckCircle2 size={18} /> Abrir Modal de Reserva y Pago
                     </button>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="relative rounded-lg overflow-hidden border-2 border-mostaza shadow-glow-smoke p-6 min-h-[300px] flex items-center">
+            {/* Políticas */}
+            <div className="relative rounded-xl overflow-hidden border border-mostaza/40 shadow-glow-smoke p-5 flex items-center">
               <div className="absolute inset-0 bg-[url('/media/agenda.jpeg')] bg-cover bg-center"></div>
-              <div className="absolute inset-0 bg-marron/70 backdrop-blur-[6px]"></div>
+              <div className="absolute inset-0 bg-marron/80 backdrop-blur-[4px]"></div>
               <div className="relative z-10 text-perla w-full">
-                <h4 className="flex items-center gap-2 text-mostaza font-serif tracking-wider text-lg mb-4"><ShieldAlert size={20} /> Políticas de Agenda</h4>
-                <ul className="text-sm text-perla/90 space-y-3 font-medium">
-                  <li><strong className="text-mostaza">Confirmación 3H:</strong> Mandatorio confirmar 3 horas antes.</li>
-                  <li><strong className="text-mostaza">Tolerancia:</strong> Máximo 10 minutos de retraso.</li>
-                  <li><strong className="text-mostaza">Reagendado:</strong> Hasta 4 horas antes.</li>
-                  <li><strong className="text-mostaza">Penalización:</strong> Dos faltas resultarán en bloqueo del ID.</li>
+                <h4 className="flex items-center gap-2 text-mostaza font-serif tracking-wider text-base mb-3">
+                  <ShieldAlert size={18} /> Protocolo de Jornada (9 AM - 4 PM)
+                </h4>
+                <ul className="text-xs text-perla/90 space-y-2 font-medium">
+                  <li><strong className="text-mostaza">Bloque de 1 Hora:</strong> 45 min servicio + 15 min sanitización.</li>
+                  <li><strong className="text-mostaza">Alertas Push / SMS:</strong> El barbero recibe confirmación en su celular.</li>
+                  <li><strong className="text-mostaza">Check-in Digital:</strong> Acumula visitas automáticamente (7ma gratis).</li>
                 </ul>
               </div>
             </div>
@@ -311,15 +675,19 @@ function Landing() {
           </div>
           <div className="flex flex-col items-center md:items-end gap-4 text-perla">
             <h4 className="font-serif text-xl tracking-widest text-mostaza uppercase mb-2">Contacto</h4>
-            <a href="tel:+521234567890" className="flex items-center gap-2 hover:text-mostaza transition font-bold"><Phone size={18} /> +52 123 456 7890</a>
-            <a href="mailto:agenda@iron&anchore.com" className="flex items-center gap-2 hover:text-mostaza transition font-bold"><Mail size={18} /> agenda@iron&anchore.com</a>
+            <a href="tel:+521234567890" className="flex items-center gap-2 hover:text-mostaza transition font-bold">
+              <Phone size={18} /> +52 123 456 7890
+            </a>
+            <a href="mailto:agenda@iron&anchore.com" className="flex items-center gap-2 hover:text-mostaza transition font-bold">
+              <Mail size={18} /> agenda@iron&anchore.com
+            </a>
             <div className="flex gap-4 mt-4">
-              <a href="#" className="bg-mostaza p-3 rounded-full hover:bg-perla transition group shadow-lg text-marron hover:text-mostaza">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-              </a>
-              <a href="#" className="bg-mostaza p-3 rounded-full hover:bg-perla transition group shadow-lg text-marron hover:text-mostaza">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-              </a>
+              <button
+                onClick={() => setShowSubModal(true)}
+                className="bg-mostaza text-marron font-bold text-xs uppercase px-4 py-2 rounded tracking-wider hover:bg-perla transition"
+              >
+                Suscribirse al Club VIP
+              </button>
             </div>
           </div>
         </div>
